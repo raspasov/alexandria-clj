@@ -1,12 +1,21 @@
 (ns ax.core-async
   (:require [clojure.core.async :refer [chan go <! >! put! alts!]]
+            [clojure.core.async.impl.channels]
             [taoensso.timbre :as timbre]))
+
+
+(defn channel? [x]
+  (instance? clojure.core.async.impl.channels/ManyToManyChannel x))
+
 
 #?(:clj
    (defn random-uuid []
      (java.util.UUID/randomUUID)))
 
 (defonce stop-chs (atom {}))
+
+
+
 
 
 (defn stop-all-chs []

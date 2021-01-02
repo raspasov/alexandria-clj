@@ -2,22 +2,27 @@
   (:require [taoensso.timbre :as timbre]
             [goog.object :as obj]
             [ax.cljs.transit :as tt]
+            [ax.numbers :as axn]
             [clojure.pprint :as pp]))
 
 
 (defonce *ws-connection (atom nil))
 
+
 (defn on-open []
   (timbre/info "websocket open!"))
 
+
 (defn on-error [x]
   (timbre/info "websocket error:" x))
+
 
 (defn on-message [^js/Object ws-event]
   ;(timbre/info "websocket message:" ws-event)
   ;(timbre/info "type :::" (type ws-event))
   ;(timbre/spy (tt/<<transit (.-data ws-event)))
   )
+
 
 (defn on-close [x]
   (timbre/info "websocket closed..." x))
@@ -37,8 +42,10 @@
     ;save websocket instance in an atom
     (reset! *ws-connection ws)))
 
+
 (defn send [ws-conn req]
   (.send ws-conn (tt/>>transit req)))
+
 
 (defn close [ws-conn]
   (.close ws-conn))
