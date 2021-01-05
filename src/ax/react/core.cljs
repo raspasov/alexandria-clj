@@ -6,17 +6,7 @@
             [goog.object :as obj]))
 
 
-(defn -get-in [obj ks]
-  (apply obj/getValueByKeys obj (mapv name ks)))
-
-
 (def ^js/Object React react)
-
-
-(def ^js/Object ReactNative react-native)
-
-
-(def ^js/Object AppRegistry (obj/get ReactNative (name :AppRegistry)))
 
 
 (def use-state (obj/get React (name :useState)))
@@ -61,84 +51,12 @@
     children))
 
 
-(def view (partial create-element-js (obj/get ReactNative (name :View))))
-
-
-(defn- -get-alert-fn [] (obj/getValueByKeys ReactNative "Alert" "alert"))
-(defn alert
-  ([title]
-   ((-get-alert-fn) title))
-  ([title message]
-   ((-get-alert-fn) title message #js[]))
-  ([title message button-specs]
-   ((-get-alert-fn) title message (clj->js button-specs))))
-
-
-(def safe-area-view (partial create-element-js (obj/get ReactNative "SafeAreaView")))
-
-
-(def button (partial create-element-js (obj/get ReactNative "Button")))
-
-
-(def text (partial create-element-js (obj/get ReactNative "Text")))
-
-
-(def image (partial create-element-js (obj/get ReactNative "Image")))
-
-
-(def touchable-opacity (partial create-element-js (obj/get ReactNative "TouchableOpacity")))
-
-
-(def modal (partial create-element-js (obj/get ReactNative "Modal")))
-
-
-(def activity-indicator (partial create-element-js (obj/get ReactNative "ActivityIndicator")))
-
-
-(def dimensions (.-Dimensions ReactNative))
-
-
-(defn get-dimensions [] (js->clj (.get dimensions "window") :keywordize-keys true))
-
-
-(def ^js/Object status-bar (obj/get ReactNative "StatusBar"))
-
-
-(def ^js/Object pixel-ratio (obj/get ReactNative "PixelRatio"))
-
-
-(def ^js/Object virtualized-list (partial create-element-js (obj/get ReactNative (name :VirtualizedList))))
-
-
-(def scroll-view (partial create-element-js (obj/get ReactNative (name :ScrollView))))
-
-
-(def keyboard-avoiding-view (partial create-element-js (obj/get ReactNative (name :KeyboardAvoidingView))))
-
-
-(def text-input (partial create-element-js (obj/get ReactNative (name :TextInput))))
-
-
-(def platform (-get-in ReactNative [:Platform :OS]))
-
-
-(defn ios? []
-  (= "ios" platform))
-
-
-(defn android? []
-  (= "android" platform))
-
-;Animated
-;----------------------------------------------------------------------------------------------------------------------
-(def animated-view (partial create-element-js (obj/getValueByKeys ReactNative (name :Animated) (name :View))))
-
-(defn get-props
+(defn get-props-class
   "Takes a React component instance and returns the ClojureScript data"
   [this]
   (obj/getValueByKeys this "props" "cljs"))
 
-(defn get-props-fn
+(defn get-props-func
   "Get props for function components"
   [props]
   (obj/get props "cljs"))
@@ -148,15 +66,4 @@
   @(obj/getValueByKeys this "props" "cljs"))
 
 
-(defn remove-yellow-box
-  "Remove yellow box warning after 2 sec for convenience"
-  []
-  ((obj/getValueByKeys ReactNative "YellowBox" "ignoreWarnings") #js["Feature :formatters"
-                                                                     "console"]))
-
-
-(def dev? js/__DEV__)
-
-
-(def prod? (not dev?))
 

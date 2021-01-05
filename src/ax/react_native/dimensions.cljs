@@ -1,4 +1,4 @@
-(ns ax.react.dimensions
+(ns ax.react-native.dimensions
   (:require [react-native :as rn]))
 
 (def ^js/Object ReactNative rn)

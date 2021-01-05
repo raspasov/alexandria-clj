@@ -1,8 +1,9 @@
-(ns ax.react.virtualized-list
+(ns ax.react-native.virtualized-list
   (:require-macros [ax.react.macros :as macro])
   (:require [react]
             [cljs.core.async :refer [go chan >! <! put! timeout]]
-            [ax.react.core :as r]
+            [ax.react.core :as rc]
+            [ax.react-native.core :as r]
             [goog.object :as obj]
             [ax.react.state-fns :as state-fns]
             [applied-science.js-interop :as j]
@@ -13,7 +14,7 @@
   (macro/create-react-class
     :render
     #(this-as this
-       (let [{:keys [data ref-key] :as props} (r/get-props this)
+       (let [{:keys [data ref-key] :as props} (rc/get-props-class this)
              props-no-data (dissoc props :data)]
          (r/virtualized-list
            (-> {:getItem             (fn [data idx]
@@ -43,5 +44,5 @@
                (clj->js)
                ;add back immutable data to the JS object
                (j/assoc! :data data)))))))
-(def immutable-list-view (partial r/create-element-cljs immutable-list-class))
+(def immutable-list-view (partial rc/create-element-cljs immutable-list-class))
 
