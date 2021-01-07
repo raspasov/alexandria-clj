@@ -13,3 +13,6 @@
         (apply merge-with m maps)
         (apply f maps)))
     maps))
+
+
+(def conjv (fnil conj []))

@@ -1,10 +1,9 @@
 (ns ax.react-native.core
   (:require [react]
             [react-native]
-            [create-react-class]
             [taoensso.timbre :as timbre]
             [goog.object :as obj]
-            [ax.react.core :as r]))
+            [ax.react.core :as rc]))
 
 
 (def ^js/Object ReactNative react-native)
@@ -13,7 +12,7 @@
 (def ^js/Object AppRegistry (obj/get ReactNative (name :AppRegistry)))
 
 
-(def view (partial r/create-element-js (obj/get ReactNative (name :View))))
+(def view (partial rc/create-element-js (obj/get ReactNative (name :View))))
 
 
 (defn- -get-alert-fn [] (obj/getValueByKeys ReactNative "Alert" "alert"))
@@ -28,25 +27,25 @@
    ((-get-alert-fn) title message (clj->js button-specs))))
 
 
-(def safe-area-view (partial r/create-element-js (obj/get ReactNative "SafeAreaView")))
+(def safe-area-view (partial rc/create-element-js (obj/get ReactNative "SafeAreaView")))
 
 
-(def button (partial r/create-element-js (obj/get ReactNative "Button")))
+(def button (partial rc/create-element-js (obj/get ReactNative "Button")))
 
 
-(def text (partial r/create-element-js (obj/get ReactNative "Text")))
+(def text (partial rc/create-element-js (obj/get ReactNative "Text")))
 
 
-(def image (partial r/create-element-js (obj/get ReactNative "Image")))
+(def image (partial rc/create-element-js (obj/get ReactNative "Image")))
 
 
-(def touchable-opacity (partial r/create-element-js (obj/get ReactNative "TouchableOpacity")))
+(def touchable-opacity (partial rc/create-element-js (obj/get ReactNative "TouchableOpacity")))
 
 
-(def modal (partial r/create-element-js (obj/get ReactNative "Modal")))
+(def modal (partial rc/create-element-js (obj/get ReactNative "Modal")))
 
 
-(def activity-indicator (partial r/create-element-js (obj/get ReactNative "ActivityIndicator")))
+(def activity-indicator (partial rc/create-element-js (obj/get ReactNative "ActivityIndicator")))
 
 
 (def ^js/Object status-bar (obj/get ReactNative "StatusBar"))
@@ -55,16 +54,16 @@
 (def ^js/Object pixel-ratio (obj/get ReactNative "PixelRatio"))
 
 
-(def ^js/Object virtualized-list (partial r/create-element-js (obj/get ReactNative (name :VirtualizedList))))
+(def ^js/Object virtualized-list (partial rc/create-element-js (obj/get ReactNative (name :VirtualizedList))))
 
 
-(def scroll-view (partial r/create-element-js (obj/get ReactNative (name :ScrollView))))
+(def scroll-view (partial rc/create-element-js (obj/get ReactNative (name :ScrollView))))
 
 
-(def keyboard-avoiding-view (partial r/create-element-js (obj/get ReactNative (name :KeyboardAvoidingView))))
+(def keyboard-avoiding-view (partial rc/create-element-js (obj/get ReactNative (name :KeyboardAvoidingView))))
 
 
-(def text-input (partial r/create-element-js (obj/get ReactNative (name :TextInput))))
+(def text-input (partial rc/create-element-js (obj/get ReactNative (name :TextInput))))
 
 
 (def platform (obj/getValueByKeys ReactNative (name :Platform) (name :OS)))
@@ -79,7 +78,7 @@
 
 ;Animated
 ;----------------------------------------------------------------------------------------------------------------------
-(def animated-view (partial r/create-element-js (obj/getValueByKeys ReactNative (name :Animated) (name :View))))
+(def animated-view (partial rc/create-element-js (obj/getValueByKeys ReactNative (name :Animated) (name :View))))
 
 
 (defn remove-yellow-box

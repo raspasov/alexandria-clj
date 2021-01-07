@@ -1,6 +1,5 @@
 (ns ax.react.core
   (:require [react]
-            [react-native]
             [create-react-class]
             [taoensso.timbre :as timbre]
             [goog.object :as obj]))
