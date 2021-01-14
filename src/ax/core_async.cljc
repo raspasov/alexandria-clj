@@ -1,5 +1,5 @@
 (ns ax.core-async
-  (:require [clojure.core.async :refer [chan go <! >! put! alts!]]
+  (:require [clojure.core.async :as a]
             [clojure.core.async.impl.channels]
             [taoensso.timbre :as timbre])
   #?(:clj
@@ -25,23 +25,23 @@
 (defn stop-all-chs []
   (run!
     (fn [[uuid stop-ch]]
-      (put! stop-ch :stop)
+      (a/put! stop-ch :stop)
       (swap! stop-chs dissoc uuid))
     @stop-chs))
 
 
 (defn start-go-loop [ch]
-  (let [stop-ch (chan 1)
+  (let [stop-ch (a/chan 1)
         uuid    (str (random-uuid))]
     (swap! stop-chs assoc uuid stop-ch)
-    (go (loop []
-          (let [[ret ret-ch] (alts! [stop-ch ch] :priority true)]
-            (if (and (= ret :stop) (= ret-ch stop-ch))
-              (do
-                (timbre/spy ["Stopping ch" uuid]))
-              (do
-                (timbre/info "Channel:" uuid "|"  "Got:" ret)
-                (recur))))))
+    (a/go (loop []
+            (let [[ret ret-ch] (a/alts! [stop-ch ch] :priority true)]
+              (if (and (= ret :stop) (= ret-ch stop-ch))
+                (do
+                  (timbre/spy ["Stopping ch" uuid]))
+                (do
+                  (timbre/info "Channel:" uuid "|" "Got:" ret)
+                  (recur))))))
     ch))
 
 
@@ -50,17 +50,47 @@
 (defn stop-all-gos []
   (run!
     (fn [[uuid stop-ch]]
-      (put! stop-ch :stop)
+      (a/put! stop-ch :stop)
       (swap! *go->uuid dissoc uuid))
     @*go->uuid))
 
 (defn start-go
   "start-go-fn - fn that start a go, takes new-uuid, stop-ch; needs to take care of stopping the go via alts!"
   [start-go-fn]
-  (let [stop-ch (chan 1)
+  (let [stop-ch  (a/chan 1)
         new-uuid (random-uuid)]
     (swap! *go->uuid (fn [m] (assoc m new-uuid stop-ch)))
     (start-go-fn new-uuid stop-ch)))
 
 
-
+(defn create-countdown-trigger
+  "Creates a countdown trigger that runs in timeout-ms unless a value is put onto the trigger-control channel,
+   which resets the timeout"
+  [timeout-ms f]
+  (let [trigger-control (a/chan (a/dropping-buffer 1))]
+    (a/go
+      (loop [timeout-ch (a/timeout timeout-ms)]
+        (let [[value _] (a/alts! [timeout-ch trigger-control])]
+          (condp = value
+            ;time to trigger the trigger
+            nil (do
+                  ;(timbre/info "nil...")
+                  ;(timbre/spy value)
+                  (a/close! trigger-control) (f))
+            ;stop the countdown trigger
+            :stop (do
+                    ;(timbre/info "stop...")
+                    ;(timbre/spy value)
+                    nil)
+            ;continue the trigger
+            :continue
+            (do
+              ;(timbre/info "continue...")
+              ;(timbre/spy value)
+              (recur (a/timeout timeout-ms)))
+            ;else, stop
+            (do
+              ;(timbre/info "else...")
+              ;(timbre/spy value)
+              nil)))))
+    trigger-control))

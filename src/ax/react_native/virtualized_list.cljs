@@ -1,12 +1,10 @@
 (ns ax.react-native.virtualized-list
   (:require-macros [ax.react.macros :as macro])
-  (:require [react]
-            [cljs.core.async :refer [go chan >! <! put! timeout]]
-            [ax.react.core :as rc]
+  (:require [ax.react.core :as rc]
             [ax.react-native.core :as r]
-            [goog.object :as obj]
+            [ax.react-native.dimensions :as dm]
             [ax.react.state-fns :as state-fns]
-            [applied-science.js-interop :as j]
+            [ax.cljs.googc :as axgoog]
             [taoensso.timbre :as timbre]))
 
 
@@ -14,7 +12,9 @@
   (macro/create-react-class
     :render
     #(this-as this
-       (let [{:keys [data ref-key] :as props} (rc/get-props-class this)
+       (let [{:keys [data ref-key horizontal windowSize initialNumToRender pagingEnabled onMomentumScrollEnd]
+              :or {horizontal false windowSize 1 initialNumToRender 1 pagingEnabled true
+                   onMomentumScrollEnd (fn [e])} :as props} (rc/get-props-class this)
              props-no-data (dissoc props :data)]
          (r/virtualized-list
            (-> {:getItem             (fn [data idx]
@@ -30,8 +30,11 @@
                                          ;(timbre/info "saving ref..." ref-key)
                                          ;(timbre/spy ref)
                                          (state-fns/set-mutable! [:refs ref-key] ref)))
-                :initialNumToRender  2
-                :windowSize          2
+                :initialNumToRender  initialNumToRender
+                :pagingEnabled       pagingEnabled
+                :windowSize          windowSize
+                :onMomentumScrollEnd onMomentumScrollEnd
+                :horizontal          horizontal
                 :renderItem          (fn [^js/Object js-object]
                                        (let [[item-data _] (.-item js-object)
                                              idx         (.-index js-object)
@@ -43,6 +46,44 @@
                ;convert to JS
                (clj->js)
                ;add back immutable data to the JS object
-               (j/assoc! :data data)))))))
+               (axgoog/assoc-obj! "data" data)))))))
 (def immutable-list-view (partial rc/create-element-cljs immutable-list-class))
 
+(defn get-scroll-idx-via-x
+  ([^js/React.SyntheticEvent e]
+   (get-scroll-idx-via-x e (dm/width)))
+  ([^js/React.SyntheticEvent e a-width]
+   (js/Math.round (/ (.. e -nativeEvent -contentOffset -x) a-width))))
+
+(defn get-scroll-idx-via-y
+  ([^js/React.SyntheticEvent e]
+   (get-scroll-idx-via-y e (dm/height)))
+  ([^js/React.SyntheticEvent e a-height]
+   (js/Math.round (/ (.. e -nativeEvent -contentOffset -y) a-height))))
+
+
+(defn v-list-scroll-to-index
+  "IMPORTANT :getItemLayout must specified for this to work"
+  [^js/ReactNative.VirtualizedList vl idx]
+  (try
+    (.scrollToIndex vl (clj->js {:index idx}))
+    (catch js/Error e (do)))
+  (try
+    (.scrollToIndex (.. vl -_component) (clj->js {:index idx}))
+    (catch js/Error e (do))))
+
+(defn v-list-scroll-to-offset
+  [^js/ReactNative.VirtualizedList vl offset]
+  (try
+    (.scrollToOffset vl (clj->js {:offset offset}))
+    (catch js/Error e (do)))
+  (try
+    (.scrollToOffset (.. vl -_component) (clj->js {:offset offset :animated true}))
+    (catch js/Error e (do))))
+
+
+(comment
+  (immutable-list-view
+    {:data        data
+     :ref-key     :some-ref-key
+     :render-item (fn [item idx] (a-view {:item item}))}))

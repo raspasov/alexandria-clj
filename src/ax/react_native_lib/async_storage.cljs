@@ -1,6 +1,6 @@
 (ns ax.react-native-lib.async-storage
   (:require ["@react-native-async-storage/async-storage" :as -rnas]
-            [cljs.core.async :as a]
+            [clojure.core.async :as a]
             [taoensso.timbre :as timbre]))
 
 (def ^js/Object rnas -rnas)

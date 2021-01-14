@@ -1,5 +1,6 @@
 (ns ax.react.state-fns
-  (:require [ax.react.state :as state]))
+  (:require [ax.react.state :as state]
+            [taoensso.timbre :as timbre]))
 
 (defn- ^PersistentVector build-vector
   "Builds a vector from either k or sequence of ks"
@@ -32,3 +33,9 @@
   (get-in @state/*mutable-state [:refs k]))
 
 
+(defn touch []
+  (swap! state/*app-state (fn [m] (assoc m :touch (random-uuid)))))
+
+
+(defn touch-2 []
+  (timbre/info "touch 2..."))

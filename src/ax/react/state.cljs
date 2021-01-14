@@ -1,7 +1,9 @@
-(ns ax.react.state)
+(ns ax.react.state
+  (:require [taoensso.timbre :as timbre]))
 
 
-(defonce *root-component-instance (atom nil))
+#_(defonce *root-component-instance (atom nil))
+
 
 (def initial-app-state {})
 
@@ -9,9 +11,12 @@
 (defonce *app-state (atom initial-app-state))
 
 
+(defonce *root-refresh-hook (atom nil))
+
+
 (add-watch *app-state :watch-1 (fn [_ _ _ _]
-                                 (when-let [^js/Object root-instance @*root-component-instance]
-                                   (.forceUpdate root-instance))))
+                                 (when-let [refresh-root-hook @*root-refresh-hook]
+                                   (refresh-root-hook (random-uuid)))))
 
 (defn set-initial-app-state!
   "Set this one when the application launches"

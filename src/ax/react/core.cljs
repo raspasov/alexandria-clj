@@ -1,8 +1,10 @@
 (ns ax.react.core
+  (:require-macros [ax.react.macros :as macro])
   (:require [react]
             [create-react-class]
             [taoensso.timbre :as timbre]
-            [goog.object :as obj]))
+            [goog.object :as obj]
+            [ax.react.state :as state]))
 
 
 (def ^js/Object React react)
@@ -61,8 +63,13 @@
   (obj/get props "cljs"))
 
 
-(defn get-root-props [this]
-  @(obj/getValueByKeys this "props" "cljs"))
+(defn root-component [props]
+  (let [[_ root-refresh-hook] (use-state (random-uuid))
+        _ (reset! state/*root-refresh-hook root-refresh-hook)
+        {:keys [app-view]} (get-props-func props)]
+    (app-view @state/*app-state)))
+(def root-view-func (partial create-element-cljs root-component))
 
 
-
+(defn get-root-view [app-view]
+  (root-view-func {:app-view app-view}))
