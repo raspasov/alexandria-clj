@@ -13,6 +13,9 @@
 (def use-state (obj/get React (name :useState)))
 
 
+(def use-effect (obj/get React (name :useEffect)))
+
+
 (def memo (obj/get React (name :memo)))
 
 
@@ -63,6 +66,7 @@
   (obj/get props "cljs"))
 
 
+;Regular Clojure(Script) map
 (defn root-component [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
@@ -73,3 +77,21 @@
 
 (defn get-root-view [app-view]
   (root-view-func {:app-view app-view}))
+
+
+;DataScript
+(defn datascript-root-component [props]
+  (let [[_ root-refresh-hook] (use-state (random-uuid))
+        _ (reset! state/*root-refresh-hook root-refresh-hook)
+        {:keys [app-view datascript-atom query-fn]} (get-props-func props)]
+    (app-view (query-fn @datascript-atom))))
+(def datascript-root-view-func (partial create-element-cljs datascript-root-component))
+
+
+(defn get-datascript-root-view
+  "query-fn takes one argument which is a DataScript atom; should return the initial app state"
+  [app-view datascript-atom query-fn]
+  (datascript-root-view-func {:app-view        app-view
+                              :datascript-atom datascript-atom
+                              :query-fn        query-fn}))
+
