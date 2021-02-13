@@ -33,6 +33,7 @@
      impl/Channel
      (close! [_]))))
 
+
 (defn extend-promises-as-pair-channels!
   "Globally extends Promises with `extend-promises-as-channels!` such that the
   values taken from them are vector pairs of [value nil] in the case of fulfillment,

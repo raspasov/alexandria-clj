@@ -16,3 +16,8 @@
 
 
 (def conjv (fnil conj []))
+
+
+#?(:clj
+   (defn random-uuid []
+     (java.util.UUID/randomUUID)))

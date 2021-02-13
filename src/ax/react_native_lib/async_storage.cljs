@@ -15,7 +15,7 @@
   (a/go
     (let [[ret error?] (a/<! (setItem (name k) (str data)))]
       (if (nil? error?)
-        (timbre/info :set-item :ok k data )
+        (timbre/info :set-item :ok k data)
         (timbre/spy error?)))))
 
 
@@ -23,7 +23,7 @@
   (a/go
     (let [[ret error?] (a/<! (getItem (name k)))]
       (if (nil? error?)
-        (timbre/spy (cljs.reader/read-string ret))
+        (cljs.reader/read-string ret)
         (timbre/info error?)
         error?))))
 

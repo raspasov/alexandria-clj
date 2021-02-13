@@ -4,11 +4,13 @@
   (:import (java.io ByteArrayInputStream ByteArrayOutputStream)
            (org.joda.time DateTime)))
 
+
 (def joda-time-writer
   (transit/write-handler
     (constantly "m")
     #(-> % coerce/to-date .getTime)
     #(-> % coerce/to-date .getTime .toString)))
+
 
 (defn ^String data-to-transit [data]
   (let [out (ByteArrayOutputStream. 4096)
@@ -17,6 +19,7 @@
       (transit/write writer data)
       (catch Exception e (println e "faulty data::" data)))
     (.toString out)))
+
 
 (defn ^Object transit-to-data [transit-data]
   (when-not (nil? transit-data)
