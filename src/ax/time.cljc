@@ -19,6 +19,12 @@
       (t/in tz)))
 
 
+(defn date-time->timestamp [dt]
+  (-> dt
+      (t/inst)
+      (t/long)))
+
+
 (defn countdown-generic
   "Gives a map of the countdown with units of time as keys."
   [end-time]
@@ -71,24 +77,42 @@
 (defn prev-day-of-week
   "Walks backward and finds the desired day-of-week"
   [day-of-week]
-  (let [today-midnight (today-at-midnight-in-tz)]
-    (first
-      (sequence
-        (day-of-week-xf day-of-week)
-        (t/range
-          (t/beginning (t/- today-midnight (t/new-period 7 :days)))
-          today-midnight
-          (t/new-period 1 :days))))))
+  (let [today-midnight (today-at-midnight-in-tz)
+        [_ ret]
+        (first
+          (sequence
+            (day-of-week-xf day-of-week)
+            (t/range
+              (t/beginning (t/- today-midnight (t/new-period 7 :days)))
+              today-midnight
+              (t/new-period 1 :days))))]
+    ret))
 
 
 (defn next-day-of-week
   "Walks forward and finds the desired day-of-week"
   [day-of-week]
-  (let [today-midnight (today-at-midnight-in-tz)]
-    (first
+  (let [today-midnight (today-at-midnight-in-tz)
+        [_ ret] (first
+                  (sequence
+                    (day-of-week-xf day-of-week)
+                    (t/range
+                      today-midnight
+                      (t/end (t/+ today-midnight (t/new-period 7 :days)))
+                      (t/new-period 1 :days))))]
+    ret))
+
+
+(defn weekly-chart-timestamps [day-of-week-start]
+  (let [t1 (prev-day-of-week day-of-week-start)
+        t2 (t/>> t1 (t/+ (t/new-period 1 :weeks)
+                         (t/new-period 1 :days)))]
+    (partition
+      2 1
       (sequence
-        (day-of-week-xf day-of-week)
+        (comp
+          (map (juxt (comp str t/day-of-week) identity)))
         (t/range
-          today-midnight
-          (t/end (t/+ today-midnight (t/new-period 7 :days)))
+          t1
+          t2
           (t/new-period 1 :days))))))

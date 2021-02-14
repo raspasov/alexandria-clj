@@ -19,3 +19,16 @@
      (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x))
   #?(:cljs
      (cljs.pprint/cl-format nil (str "~," num-of-decimals "f") x)))
+
+
+(defn running-total
+  "Transforms a sequence of numbers to a vector with running total sum."
+  [seq-of-numbers]
+  (transduce
+    (map identity)
+    (completing
+      (fn [accum x]
+        (let [x-prev (or (peek accum) 0)]
+          (conj accum (+ x x-prev)))))
+    []
+    seq-of-numbers))
