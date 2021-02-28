@@ -75,30 +75,36 @@
 
 
 (defn prev-day-of-week
-  "Walks backward and finds the desired day-of-week"
+  "Walks backward and finds the desired day-of-week (inclusive today)"
   [day-of-week]
   (let [today-midnight (today-at-midnight-in-tz)
+        tomorrow-midnight        (t/+ today-midnight (t/new-period 1 :days))
+        tomorrow-midnight-7-days (t/- tomorrow-midnight (t/new-period 7 :days))
         [_ ret]
         (first
           (sequence
-            (day-of-week-xf day-of-week)
+            (comp
+              (day-of-week-xf day-of-week)
+              #_(map t/day-of-week))
             (t/range
-              (t/beginning (t/- today-midnight (t/new-period 7 :days)))
-              today-midnight
+              tomorrow-midnight-7-days
+              tomorrow-midnight
               (t/new-period 1 :days))))]
     ret))
 
 
 (defn next-day-of-week
-  "Walks forward and finds the desired day-of-week"
+  "Walks forward and finds the desired day-of-week (exclusive today)"
   [day-of-week]
-  (let [today-midnight (today-at-midnight-in-tz)
+  (let [today-midnight           (today-at-midnight-in-tz)
+        tomorrow-midnight        (t/+ today-midnight (t/new-period 1 :days))
+        tomorrow-midnight+7-days (t/+ tomorrow-midnight (t/new-period 7 :days))
         [_ ret] (first
                   (sequence
                     (day-of-week-xf day-of-week)
                     (t/range
-                      today-midnight
-                      (t/end (t/+ today-midnight (t/new-period 7 :days)))
+                      (t/beginning tomorrow-midnight)
+                      (t/end tomorrow-midnight+7-days)
                       (t/new-period 1 :days))))]
     ret))
 

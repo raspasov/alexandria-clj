@@ -3,9 +3,6 @@
             [datascript.core :as d]))
 
 
-#_(defonce *root-component-instance (atom nil))
-
-
 (def initial-app-state {})
 
 
@@ -33,13 +30,9 @@
     (add-watch *conn :datascript-watch-1 watch-refresh-hook)
     ;return atom
     *conn))
-(def get-datascript-instance (memoize -get-datascript-instance))
+(def *datascript-conn (memoize -get-datascript-instance))
 
 
-
-
-(defn get-initial-datascript-app-state [*conn query]
-  (d/q query @*conn))
 
 ;Mutable state atom and fns
 ;----------------------------------------------------------------------------------------------------------------------

@@ -7,12 +7,20 @@
 
 
 (def ^js/Object ReactNative react-native)
+(def View (obj/get ReactNative "View"))
+
+(def ^js/Object AppRegistry (obj/get ReactNative "AppRegistry"))
 
 
-(def ^js/Object AppRegistry (obj/get ReactNative (name :AppRegistry)))
+(def view (partial rc/create-element-js (obj/get ReactNative "View")))
 
 
-(def view (partial rc/create-element-js (obj/get ReactNative (name :View))))
+;experimental, trying to make views pure; doesn't work so far
+(def view-2 (partial rc/create-element-js-2 (rc/memo View (fn [prev-props props]
+                                                            (let [ret false]
+                                                              (timbre/spy prev-props)
+                                                              (timbre/spy props)
+                                                              (timbre/spy ret))))))
 
 
 (defn- -get-alert-fn [] (obj/getValueByKeys ReactNative "Alert" "alert"))
@@ -76,6 +84,10 @@
 (defn android? []
   (= "android" platform))
 
+
+(defn web? []
+  (= "web" platform))
+
 ;Animated
 ;----------------------------------------------------------------------------------------------------------------------
 (def animated-view (partial rc/create-element-js (obj/getValueByKeys ReactNative (name :Animated) (name :View))))
@@ -87,7 +99,7 @@
   ((obj/getValueByKeys ReactNative "YellowBox" "ignoreWarnings") #js["Feature :formatters"
                                                                      "console"]))
 
-(def dev? js/__DEV__)
+(def dev? js/window.__DEV__)
 
 
 (def prod? (not dev?))

@@ -1,5 +1,6 @@
 (ns ax.numbers
-  (:require [clojure.edn :as edn]))
+  (:require [clojure.edn :as edn]
+            [taoensso.timbre :as timbre]))
 
 
 (defn string->number
@@ -7,18 +8,17 @@
   ([s default]
    (let [result (try
                   (edn/read-string s)
-                  #?(:clj (catch Exception e e))
-                  #?(:cljs (catch js/Error e e)))]
+                  #?(:clj (catch Exception e (timbre/info e)))
+                  #?(:cljs (catch js/Error e (timbre/info e))))]
      (if (number? result)
        result
+       ;else, return default
        default))))
 
 
 (defn format-decimals [num-of-decimals x]
-  #?(:clj
-     (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x))
-  #?(:cljs
-     (cljs.pprint/cl-format nil (str "~," num-of-decimals "f") x)))
+  #?(:clj  (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x)
+     :cljs (cljs.pprint/cl-format nil (str "~," num-of-decimals "f") x)))
 
 
 (defn running-total

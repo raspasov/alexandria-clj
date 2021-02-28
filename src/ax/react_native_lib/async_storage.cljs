@@ -15,7 +15,7 @@
   (a/go
     (let [[ret error?] (a/<! (setItem (name k) (str data)))]
       (if (nil? error?)
-        (timbre/info :set-item :ok k data)
+        (timbre/info :set-item :ok k)
         (timbre/spy error?)))))
 
 
