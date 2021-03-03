@@ -27,7 +27,7 @@
 
 (defn -get-datascript-instance [schema]
   (let [*conn (d/create-conn schema)]
-    (add-watch *conn :datascript-watch-1 watch-refresh-hook)
+    ;(add-watch *conn :datascript-watch-1 watch-refresh-hook)
     ;return atom
     *conn))
 (def *datascript-conn (memoize -get-datascript-instance))

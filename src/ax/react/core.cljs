@@ -83,32 +83,34 @@
   (.-cljs props))
 
 
-;Regular Clojure(Script) map
-(defn root-component [props]
+;Basic
+;---------------------------------------------------------------------------------
+(defn basic-root-component [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
         {:keys [app-view]} (get-props-func props)]
     (app-view @state/*app-state)))
-(def root-view-func (partial create-element-cljs root-component))
+(def basic-root-view-func (partial create-element-cljs basic-root-component))
 
 
 (defn basic-root-view [app-view]
-  (root-view-func {:app-view app-view}))
+  (basic-root-view-func {:app-view app-view}))
 
 
-;DataScript
-(defn datascript-root-component [props]
+;Advanced
+;---------------------------------------------------------------------------------
+(defn advanced-root-component [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view *datascript-conn global-state-fn]} (get-props-func props)]
-    (app-view (global-state-fn @*datascript-conn))))
-(def datascript-root-view-func (partial create-element-cljs (memo datascript-root-component)))
+        {:keys [app-view *datascript-conn *app-state app-state-fn]} (get-props-func props)]
+    (app-view (app-state-fn *datascript-conn @*app-state))))
+(def advanced-root-view-func (partial create-element-cljs (memo advanced-root-component)))
 
 
-(defn datascript-root-view
-  "query-fn takes one argument which is a DataScript atom; should return the initial app state"
-  [app-view *datascript-conn global-state-fn]
-  (datascript-root-view-func {:app-view         app-view
-                              :*datascript-conn *datascript-conn
-                              :global-state-fn  global-state-fn}))
+(defn advanced-root-view [app-view *datascript-conn *app-state app-state-fn]
+  (advanced-root-view-func
+    {:app-view         app-view
+     :*datascript-conn *datascript-conn
+     :*app-state       *app-state
+     :app-state-fn     app-state-fn}))
 

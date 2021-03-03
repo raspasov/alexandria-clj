@@ -10,6 +10,8 @@
 
 (def ^js/Object AppRegistry (.-AppRegistry ReactNative))
 
+(def runAfterInteractions (.. ReactNative -InteractionManager -runAfterInteractions))
+
 
 ;experimental, trying to make views pure; doesn't work so far
 (def view-2 (partial rc/create-element-js-2 (rc/memo (.-View ReactNative)
