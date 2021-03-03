@@ -1,6 +1,7 @@
 (ns ax.numbers
   (:require [clojure.edn :as edn]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [clojure.pprint]))
 
 
 (defn string->number
@@ -17,8 +18,10 @@
 
 
 (defn format-decimals [num-of-decimals x]
-  #?(:clj  (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x)
-     :cljs (cljs.pprint/cl-format nil (str "~," num-of-decimals "f") x)))
+  (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x)
+  ;#?(:clj  (clojure.pprint/cl-format nil (str "~," num-of-decimals "f") x)
+  ;   :cljs (cljs.pprint/cl-format nil (str "~," num-of-decimals "f") x))
+  )
 
 
 (defn running-total

@@ -8,8 +8,6 @@
      (:require-macros ax.core-async)))
 
 
-
-
 (defn channel? [x]
   #?(:cljs
      (instance? clojure.core.async.impl.channels/ManyToManyChannel x))
@@ -47,25 +45,6 @@
     ch))
 
 
-(defonce *uuid->stop-ch (atom {}))
-
-(defn stop-all-gos []
-  (run!
-    (fn [[uuid stop-ch]]
-      (a/put! stop-ch :stop)
-      (swap! *uuid->stop-ch dissoc uuid))
-    @*uuid->stop-ch))
-
-(defn start-go
-  "start-go-fn - fn that start a go, takes new-uuid and stop-ch; needs to take care of stopping the go via alts!"
-  [start-go-fn]
-  (let [stop-ch  (a/chan 1)
-        new-uuid (random-uuid)]
-    (swap! *uuid->stop-ch (fn [m] (assoc m new-uuid stop-ch)))
-    (start-go-fn new-uuid stop-ch)))
-
-
-
 (defn create-countdown-trigger
   "Creates a countdown trigger that runs in timeout-ms unless a value is put onto the trigger-control channel,
    which resets the timeout"
@@ -101,26 +80,7 @@
 
 
 
-(defn go-stop-info [msg]
-  (timbre/info msg))
 
-
-
-(defmacro go-stop-loop [bindings & body]
-  (do
-    #_(println "go-stop-loop...")
-    #_(clojure.pprint/pprint &form)
-    `(start-go
-       (fn [new-uuid# stop-ch#]
-         (a/go
-           (loop ~bindings
-             (let [[ret# ret-ch#] (a/alts! [stop-ch#] :default :continue)]
-               (if (and (= ret# :stop) (= ret-ch# stop-ch#))
-                 (do
-                   (go-stop-info ["Stopping ch" new-uuid#]))
-                 ;else, continue
-                 (do
-                   ~@body)))))))))
 
 
 

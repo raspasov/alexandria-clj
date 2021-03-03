@@ -1,10 +1,9 @@
 (ns ax.expo.camera
-  (:require [expo-camera :as -expo-camera]
-            [goog.object :as obj]))
+  (:require [expo-camera :as -expo-camera]))
 
 
 (def ^js/Object expo-camera -expo-camera)
-(def Camera (obj/get expo-camera (name :Camera)))
+(def Camera (.-Camera expo-camera))
 
 
 (comment

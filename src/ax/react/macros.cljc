@@ -1,4 +1,6 @@
-(ns ax.react.macros)
+(ns ax.react.macros
+  #?(:cljs
+     (:require-macros ax.react.macros)))
 
 
 (defmacro create-react-class [& params]

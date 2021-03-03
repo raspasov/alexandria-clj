@@ -1,5 +1,4 @@
 (ns ax.react.core
-  (:require-macros [ax.react.macros :as macro])
   (:require [react]
             [create-react-class]
             [taoensso.timbre :as timbre]
@@ -10,13 +9,13 @@
 (def ^js/Object React react)
 
 
-(def use-state (obj/get React (name :useState)))
+(def use-state (.-useState React))
 
 
-(def use-effect (obj/get React (name :useEffect)))
+(def use-effect (.-useEffect React))
 
 
-(def memo (obj/get React (name :memo)))
+(def memo (.-memo React))
 
 
 (defn get-create-react-class [] create-react-class)
@@ -75,13 +74,13 @@
 
 (defn get-props-class
   "Takes a React component instance and returns the ClojureScript data"
-  [this]
-  (obj/getValueByKeys this "props" "cljs"))
+  [^js/Object this]
+  (.. this -props -cljs))
 
 (defn get-props-func
   "Get props for function components"
-  [props]
-  (obj/get props "cljs"))
+  [^js/Object props]
+  (.-cljs props))
 
 
 ;Regular Clojure(Script) map
@@ -103,7 +102,7 @@
         _ (reset! state/*root-refresh-hook root-refresh-hook)
         {:keys [app-view *datascript-conn global-state-fn]} (get-props-func props)]
     (app-view (global-state-fn @*datascript-conn))))
-(def datascript-root-view-func (partial create-element-cljs datascript-root-component))
+(def datascript-root-view-func (partial create-element-cljs (memo datascript-root-component)))
 
 
 (defn datascript-root-view

@@ -1,6 +1,6 @@
 (ns ax.react-native.virtualized-list
-  (:require-macros [ax.react.macros :as macro])
   (:require [ax.react.core :as rc]
+            [ax.react.macros :as macro]
             [ax.react-native.core :as r]
             [ax.react-native.dimensions :as dm]
             [ax.react.state-fns :as state-fns]

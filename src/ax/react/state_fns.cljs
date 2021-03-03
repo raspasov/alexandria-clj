@@ -29,7 +29,7 @@
   (fn [a-ref] (when a-ref (set-mutable! [:refs k] a-ref))))
 
 
-(defn ^js/React.Component get-global-ref [k]
+(defn ^js/Object get-global-ref [k]
   (get-in @state/*mutable-state [:refs k]))
 
 
