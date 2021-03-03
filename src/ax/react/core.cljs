@@ -85,32 +85,37 @@
 
 ;Basic
 ;---------------------------------------------------------------------------------
-(defn basic-root-component [props]
+(defn basic-root-component
+  "Usage:
+
+    (basic-root-view {:app-view app-view})
+
+  "
+  [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
         {:keys [app-view]} (get-props-func props)]
     (app-view @state/*app-state)))
-(def basic-root-view-func (partial create-element-cljs basic-root-component))
-
-
-(defn basic-root-view [app-view]
-  (basic-root-view-func {:app-view app-view}))
+(def basic-root-view (partial create-element-cljs basic-root-component))
 
 
 ;Advanced
 ;---------------------------------------------------------------------------------
-(defn advanced-root-component [props]
+(defn advanced-root-component
+  "Usage:
+
+   (advanced-root-view
+    {:app-view         app-view
+     :*datascript-conn *datascript-conn
+     :*app-state       *app-state
+     :app-state-fn     app-state-fn})
+
+   "
+  [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
         {:keys [app-view *datascript-conn *app-state app-state-fn]} (get-props-func props)]
     (app-view (app-state-fn *datascript-conn @*app-state))))
-(def advanced-root-view-func (partial create-element-cljs (memo advanced-root-component)))
+(def advanced-root-view (partial create-element-cljs (memo advanced-root-component)))
 
-
-(defn advanced-root-view [app-view *datascript-conn *app-state app-state-fn]
-  (advanced-root-view-func
-    {:app-view         app-view
-     :*datascript-conn *datascript-conn
-     :*app-state       *app-state
-     :app-state-fn     app-state-fn}))
 
