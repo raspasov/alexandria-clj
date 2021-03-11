@@ -6,9 +6,3 @@
 (def Camera (.-Camera expo-camera))
 
 
-(comment
-  (a/go
-    (let [[result error?] (a/<! (.requestPermissionsAsync Camera))]
-      (reset! *tmp result)
-      (timbre/spy (js->clj result :keywordize-keys true))
-      (timbre/spy error?))))

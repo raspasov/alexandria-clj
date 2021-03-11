@@ -3,7 +3,8 @@
             [react-native]
             [taoensso.timbre :as timbre]
             [goog.object :as obj]
-            [ax.react.core :as rc]))
+            [ax.react.core :as rc]
+            [cljs-bean.core :as b]))
 
 
 (def ^js/Object ReactNative react-native)
@@ -11,15 +12,6 @@
 (def ^js/Object AppRegistry (.-AppRegistry ReactNative))
 
 (def runAfterInteractions (.. ReactNative -InteractionManager -runAfterInteractions))
-
-
-;experimental, trying to make views pure; doesn't work so far
-(def view-2 (partial rc/create-element-js-2 (rc/memo (.-View ReactNative)
-                                                     (fn [prev-props props]
-                                                       (let [ret false]
-                                                         (timbre/spy prev-props)
-                                                         (timbre/spy props)
-                                                         (timbre/spy ret))))))
 
 
 (defn- -get-alert-fn [] (.. ReactNative -Alert -alert))
@@ -31,7 +23,7 @@
   ([title message]
    ((-get-alert-fn) title message #js[]))
   ([title message button-specs]
-   ((-get-alert-fn) title message (clj->js button-specs))))
+   ((-get-alert-fn) title message (b/->js button-specs))))
 
 
 (def view (partial rc/create-element-js (.-View ReactNative)))
@@ -90,6 +82,7 @@
 (defn web? []
   (= "web" platform))
 
+
 ;Animated
 ;----------------------------------------------------------------------------------------------------------------------
 (def animated-view (partial rc/create-element-js (.. ReactNative -Animated -View)))
@@ -99,6 +92,7 @@
   "Remove yellow box warning after 2 sec for convenience"
   []
   ((.. ReactNative -YellowBox -ignoreWarnings) #js["Feature :formatters" "console"]))
+
 
 (def dev? js/window.__DEV__)
 

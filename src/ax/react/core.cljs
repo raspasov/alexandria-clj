@@ -1,9 +1,11 @@
 (ns ax.react.core
-  (:require [react]
-            [create-react-class]
-            [taoensso.timbre :as timbre]
-            [goog.object :as obj]
-            [ax.react.state :as state]))
+  (:require
+    [ax.react.state :as state]
+    [cljs-bean.core :as b]
+    [create-react-class]
+    [goog.object :as obj]
+    [react]
+    [taoensso.timbre :as timbre]))
 
 
 (def ^js/Object React react)
@@ -30,9 +32,6 @@
 (def cljs-props (memoize -cljs-props))
 
 
-(def clj->js-memo (memoize clj->js))
-
-
 (defn create-element-js
   "Create element for JavaScript components which need mutable JS data to work"
   [component props & children]
@@ -41,22 +40,7 @@
     component
     (if (map? props)
       ;convert Clojure data to JS object
-      (clj->js props)
-      ;else, assume opts is already a JS object
-      props)
-    children))
-
-;experimental, trying to make views pure; doesn't work so far
-(defn create-element-js-2
-  "Create element for JavaScript components which need mutable JS data to work"
-  [component props & children]
-  (timbre/info "create-element-js-2 ...")
-  (apply
-    react/createElement
-    component
-    (if (map? props)
-      ;convert Clojure data to JS object
-      (clj->js-memo props)
+      (b/->js props)
       ;else, assume opts is already a JS object
       props)
     children))
@@ -114,8 +98,8 @@
   [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view *datascript-conn *app-state app-state-fn]} (get-props-func props)]
-    (app-view (app-state-fn *datascript-conn @*app-state))))
+        {:keys [app-view *app-state app-state-fn]} (get-props-func props)]
+    (app-view (app-state-fn @*app-state))))
 (def advanced-root-view (partial create-element-cljs (memo advanced-root-component)))
 
 

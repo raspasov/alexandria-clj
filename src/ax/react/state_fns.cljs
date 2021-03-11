@@ -34,8 +34,6 @@
 
 
 (defn touch []
-  (swap! state/*app-state (fn [m] (assoc m :touch (random-uuid)))))
+  (swap! state/*app-state (fn [m] (assoc m :touch (random-uuid))))
+  true)
 
-
-(defn touch-2 []
-  (timbre/info "touch 2..."))
