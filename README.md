@@ -10,5 +10,7 @@ raspasov/alexandria-clj {:git/url "https://github.com/raspasov/alexandria-clj"
                          :sha     "look up latest"}
 ```
 
+Libraries made out of this repo:
+
 ## Loop: Take control of your core.async go-loops!
 #### https://github.com/saberstack/loop
