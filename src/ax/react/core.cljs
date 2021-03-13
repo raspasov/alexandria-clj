@@ -56,12 +56,12 @@
     children))
 
 
-(defn get-props-class
-  "Takes a React component instance and returns the ClojureScript data"
+(defn props-class
+  "Get props for class components"
   [^js/Object this]
   (.. this -props -cljs))
 
-(defn get-props-func
+(defn props-fnc
   "Get props for function components"
   [^js/Object props]
   (.-cljs props))
@@ -78,7 +78,7 @@
   [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view]} (get-props-func props)]
+        {:keys [app-view]} (props-fnc props)]
     (app-view @state/*app-state)))
 (def basic-root-view (partial create-element-cljs basic-root-component))
 
@@ -98,7 +98,7 @@
   [props]
   (let [[_ root-refresh-hook] (use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view *app-state app-state-fn]} (get-props-func props)]
+        {:keys [app-view *app-state app-state-fn]} (props-fnc props)]
     (app-view (app-state-fn @*app-state))))
 (def advanced-root-view (partial create-element-cljs (memo advanced-root-component)))
 

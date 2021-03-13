@@ -15,7 +15,7 @@
     #(this-as this
        (let [{:keys [data ref-key horizontal windowSize initialNumToRender scrollEnabled pagingEnabled onMomentumScrollEnd]
               :or {horizontal false windowSize 1 initialNumToRender 1 scrollEnabled true pagingEnabled true
-                   onMomentumScrollEnd (fn [e])} :as props} (rc/get-props-class this)
+                   onMomentumScrollEnd (fn [e])} :as props} (rc/props-class this)
              props-no-data (dissoc props :data)]
          (r/virtualized-list
            (-> {:getItem             (fn [data idx]

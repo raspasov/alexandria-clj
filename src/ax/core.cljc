@@ -21,3 +21,31 @@
 #?(:clj
    (defn random-uuid []
      (java.util.UUID/randomUUID)))
+
+
+(defn clear-nils
+  "Remove the keys from m for which the value is nil"
+  [m]
+  (apply
+    dissoc m
+    (for [[k v] m :when (nil? v)] k)))
+
+
+(defn fpred
+  "Like fnil, but with a custom predicate"
+  ([f pred x]
+   (fn
+     ([a] (f (if (pred a) x a)))
+     ([a b] (f (if (pred a) x a) b))
+     ([a b c] (f (if (pred a) x a) b c))
+     ([a b c & ds] (apply f (if (pred a) x a) b c ds))))
+  ([f pred x y]
+   (fn
+     ([a b] (f (if (pred a) x a) (if (pred b) y b)))
+     ([a b c] (f (if (pred a) x a) (if (pred b) y b) c))
+     ([a b c & ds] (apply f (if (pred a) x a) (if (pred b) y b) c ds))))
+  ([f pred x y z]
+   (fn
+     ([a b] (f (if (pred a) x a) (if (pred b) y b)))
+     ([a b c] (f (if (pred a) x a) (if (pred b) y b) (if (pred c) z c)))
+     ([a b c & ds] (apply f (if (pred a) x a) (if (pred b) y b) (if (pred c) z c) ds)))))

@@ -6,15 +6,16 @@
 (defmacro create-react-class [& params]
   `((ax.react.core/get-create-react-class)
     (cljs.core/js-obj
-      "shouldComponentUpdate" (fn [next-props# next-state#]
-                                (cljs.core/this-as this#
-                                  (let [next-props-cljs# (js/goog.object.get next-props# "cljs")
-                                        props-cljs#      (-> this#
-                                                             (js/goog.object.get "props")
-                                                             (js/goog.object.get "cljs"))]
-                                    (if (cljs.core/identical? next-props-cljs# props-cljs#)
-                                      false
-                                      true))))
+      "shouldComponentUpdate"
+      (fn [next-props# next-state#]
+        (cljs.core/this-as this#
+          (let [next-props-cljs# (js/goog.object.get next-props# "cljs")
+                props-cljs#      (-> this#
+                                     (js/goog.object.get "props")
+                                     (js/goog.object.get "cljs"))]
+            (if (cljs.core/identical? next-props-cljs# props-cljs#)
+              false
+              true))))
 
       ~@(mapv
           (fn [x]
