@@ -49,3 +49,20 @@
      ([a b] (f (if (pred a) x a) (if (pred b) y b)))
      ([a b c] (f (if (pred a) x a) (if (pred b) y b) (if (pred c) z c)))
      ([a b c & ds] (apply f (if (pred a) x a) (if (pred b) y b) (if (pred c) z c) ds)))))
+
+
+(defn name? [x]
+  #?(:clj  (if (or (instance? clojure.lang.Named x)
+                   (string? x))
+             true
+             false)
+     :cljs (if (or (implements? INamed x)
+                   (string? x))
+             true
+             false)))
+
+
+(defn name2
+  "Safer (name x)"
+  [x]
+  ((fpred name #(not (name? %)) "") x))

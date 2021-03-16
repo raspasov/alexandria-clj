@@ -49,14 +49,14 @@
                                 (t/new-duration minutes :minutes)
                                 (t/new-duration seconds :seconds)))]
     (if (t/< (t/instant) end-time)
-      {:counting     true
+      {:counting?     true
        :weeks        weeks
        :days         days
        :hours        hours
        :minutes      minutes
        :seconds      seconds
        :milliseconds millis}
-      {:counting false})))
+      {:counting? false})))
 
 
 (defn today-at-midnight-in-tz

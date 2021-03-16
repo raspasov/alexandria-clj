@@ -9,47 +9,47 @@
             [taoensso.timbre :as timbre]))
 
 
-(def immutable-list-class
-  (macro/create-react-class
-    :render
-    #(this-as this
-       (let [{:keys [data ref-key horizontal windowSize initialNumToRender scrollEnabled pagingEnabled onMomentumScrollEnd]
-              :or {horizontal false windowSize 1 initialNumToRender 1 scrollEnabled true pagingEnabled true
-                   onMomentumScrollEnd (fn [e])} :as props} (rc/props-class this)
-             props-no-data (dissoc props :data)]
-         (r/virtualized-list
-           (-> {:getItem             (fn [data idx]
-                                       ;return tuple [item-data idx] - idx needed for keyExtractor
-                                       ;item-data is Clojure data (usually a map)
-                                       (let [item-data (nth data idx nil)]
-                                         [item-data idx]))
-                :getItemCount        (fn [data] (count data))
-                ;needs to return a key as string
-                :keyExtractor        (fn [[_ idx]] (str idx))
-                :ref                 (fn [ref]
-                                       (when ref-key
-                                         ;(timbre/info "saving ref..." ref-key)
-                                         ;(timbre/spy ref)
-                                         (state-fns/set-mutable! [:refs ref-key] ref)))
-                :initialNumToRender  initialNumToRender
-                :scrollEnabled       scrollEnabled
-                :pagingEnabled       pagingEnabled
-                :windowSize          windowSize
-                :onMomentumScrollEnd onMomentumScrollEnd
-                :horizontal          horizontal
-                :renderItem          (fn [^js/Object js-object]
-                                       (let [[item-data _] (.-item js-object)
-                                             idx         (.-index js-object)
-                                             render-item (:render-item props)]
-                                         (render-item item-data idx)))
-                :scrollEventThrottle 1}
-             ;merge with props (without data)
-             (merge props-no-data)
-             ;convert to JS
-             (b/->js)
-             ;add back immutable data to the JS object
-             (axgoog/assoc-obj! "data" data)))))))
-(def immutable-list-view (partial rc/create-element-cljs immutable-list-class))
+(defn immutable-list-component [props]
+  (let [{:keys [data ref-key horizontal windowSize initialNumToRender scrollEnabled pagingEnabled onMomentumScrollEnd onMomentumScrollBegin]
+         :or   {horizontal          false windowSize 1 initialNumToRender 1 scrollEnabled true pagingEnabled true
+                onMomentumScrollEnd (fn [e]) onMomentumScrollBegin (fn [e])}
+         :as   props} (rc/props-fnc props)
+        props-no-data (dissoc props :data)]
+    (r/virtualized-list
+      (-> {:getItem               (fn [data idx]
+                                    ;return tuple [item-data idx] - idx needed for keyExtractor
+                                    ;item-data is Clojure data (usually a map)
+                                    (let [item-data (nth data idx nil)]
+                                      [item-data idx]))
+           :getItemCount          (fn [data] (count data))
+           ;needs to return a key as string
+           :keyExtractor          (fn [[_ idx]] (str idx))
+           :ref                   (fn [ref]
+                                    (when ref-key
+                                      ;(timbre/info "saving ref..." ref-key)
+                                      ;(timbre/spy ref)
+                                      (state-fns/set-mutable! [:refs ref-key] ref)))
+           :initialNumToRender    initialNumToRender
+           :scrollEnabled         scrollEnabled
+           :pagingEnabled         pagingEnabled
+           :windowSize            windowSize
+           :onMomentumScrollBegin onMomentumScrollBegin
+           :onMomentumScrollEnd   onMomentumScrollEnd
+           :horizontal            horizontal
+           :renderItem            (fn [^js/Object js-object]
+                                    (let [[item-data _] (.-item js-object)
+                                          idx         (.-index js-object)
+                                          render-item (:render-item props)]
+                                      (render-item item-data idx)))
+           :scrollEventThrottle   1}
+          ;merge with props (without data)
+          (merge props-no-data)
+          ;convert to JS
+          (b/->js)
+          ;add back immutable data to the JS object
+          (axgoog/assoc-obj! "data" data)))))
+(def immutable-list (partial rc/create-element-cljs (rc/memo immutable-list-component)))
+
 
 (defn get-scroll-idx-via-x
   ([^js/React.SyntheticEvent e]
@@ -85,7 +85,7 @@
 
 
 (comment
-  (immutable-list-view
+  (immutable-list
     {:data        data
      :ref-key     :some-ref-key
      :render-item (fn [item idx] (a-view {:item item}))}))
