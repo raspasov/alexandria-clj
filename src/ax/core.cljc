@@ -31,6 +31,14 @@
     (for [[k v] m :when (nil? v)] k)))
 
 
+(defn arity-0
+  "Adds a zero arity to a function that expects at least one argument."
+  ([f default]
+   (fn
+     ([] (f default))
+     ([& args] (apply f args)))))
+
+
 (defn fpred
   "Like fnil, but with a custom predicate"
   ([f pred x]

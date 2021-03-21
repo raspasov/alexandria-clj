@@ -91,7 +91,10 @@
 (defn remove-yellow-box
   "Remove yellow box warning after 2 sec for convenience"
   []
-  ((.. ReactNative -YellowBox -ignoreWarnings) #js["Feature :formatters" "console"]))
+  (let [f (.. ReactNative -LogBox -ignoreAllLogs)]
+    (f))
+  ;((.. ReactNative -YellowBox -ignoreWarnings) #js["Feature :formatters" "console"])
+  )
 
 
 (def dev? js/window.__DEV__)
