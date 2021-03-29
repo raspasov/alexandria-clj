@@ -9,6 +9,8 @@
 
 (def ^js/Object ReactNative react-native)
 
+(def createAnimatedComponent (.. ReactNative -Animated -createAnimatedComponent))
+
 (def ^js/Object AppRegistry (.-AppRegistry ReactNative))
 
 (def runAfterInteractions (.. ReactNative -InteractionManager -runAfterInteractions))
@@ -27,6 +29,7 @@
 
 
 (def view (partial rc/create-element-js (.-View ReactNative)))
+(def view|a (partial rc/create-element-js (createAnimatedComponent (.-View ReactNative))))
 
 
 (def safe-area-view (partial rc/create-element-js (.-SafeAreaView ReactNative)))
@@ -36,12 +39,15 @@
 
 
 (def text (partial rc/create-element-js (.-Text ReactNative)))
+(def text|a (partial rc/create-element-js (createAnimatedComponent (.-Text ReactNative))))
 
 
 (def image (partial rc/create-element-js (.-Image ReactNative)))
 
 
 (def touchable-opacity (partial rc/create-element-js (.-TouchableOpacity ReactNative)))
+(def touchable-opacity|a (partial rc/create-element-js (createAnimatedComponent (.-TouchableOpacity ReactNative))))
+
 
 
 (def modal (partial rc/create-element-js (.-Modal ReactNative)))
@@ -56,7 +62,7 @@
 (def ^js/Object pixel-ratio (.-PixelRatio ReactNative))
 
 
-(def ^js/Object virtualized-list (partial rc/create-element-js (.-VirtualizedList ReactNative)))
+(def ^js/Object virtualized-list (partial rc/create-element-js (createAnimatedComponent (.-VirtualizedList ReactNative))))
 
 
 (def scroll-view (partial rc/create-element-js (.-ScrollView ReactNative)))

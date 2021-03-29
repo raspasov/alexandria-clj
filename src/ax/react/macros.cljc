@@ -24,6 +24,11 @@
               x)) params))))
 
 
+(defmacro display-name [component]
+  (let [fully-qualified-name# (str *ns* "/" component)]
+    `(ax.cljs.googc/assoc-obj! ~component "displayName" ~fully-qualified-name#)))
+
+
 ;usage
 (comment
   (def a-class

@@ -4,7 +4,7 @@
             [ax.react-native.core :as r]
             [ax.react-native.dimensions :as dm]
             [ax.react.state-fns :as state-fns]
-            [ax.cljs.googc :as axgoog]
+            [ax.cljs.googc :as ax|goog]
             [cljs-bean.core :as b]
             [taoensso.timbre :as timbre]))
 
@@ -47,8 +47,8 @@
           ;convert to JS
           (b/->js)
           ;add back immutable data to the JS object
-          (axgoog/assoc-obj! "data" data)))))
-(def immutable-list (partial rc/create-element-cljs (rc/memo immutable-list-component)))
+          (ax|goog/assoc-obj! "data" data)))))
+(def immutable-list (rc/e immutable-list-component))
 
 
 (defn get-scroll-idx-via-x

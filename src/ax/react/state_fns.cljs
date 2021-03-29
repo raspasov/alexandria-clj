@@ -37,3 +37,8 @@
   (swap! state/*app-state (fn [m] (assoc m :touch (random-uuid))))
   true)
 
+
+(defn read-local-state [path]
+  (let [f (get-mutable path)]
+    (f identity)))
+
