@@ -64,7 +64,7 @@
    (js/Math.round (/ (.. e -nativeEvent -contentOffset -y) a-height))))
 
 
-(defn v-list-scroll-to-index
+(defn scroll-to-index
   "IMPORTANT :getItemLayout must specified for this to work"
   [^js/ReactNative.VirtualizedList vl idx]
   (try
@@ -74,7 +74,7 @@
     (.scrollToIndex (.. vl -_component) (b/->js {:index idx}))
     (catch js/Error e (do))))
 
-(defn v-list-scroll-to-offset
+(defn scroll-to-offset
   [^js/ReactNative.VirtualizedList vl offset]
   (try
     (.scrollToOffset vl (b/->js {:offset offset}))

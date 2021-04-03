@@ -12,11 +12,14 @@
   (long inst))
 
 
-(defn timestamp->zoned-date-time [timestamp tz]
-  (-> timestamp
-      (t/instant)
-      (t/zoned-date-time)
-      (t/in tz)))
+(defn timestamp->zoned-date-time
+  ([timestamp]
+   (timestamp->zoned-date-time timestamp (t/zone)))
+  ([timestamp tz]
+   (-> timestamp
+       (t/instant)
+       (t/zoned-date-time)
+       (t/in tz))))
 
 
 (defn date-time->timestamp [dt]
@@ -63,6 +66,14 @@
   ([] (today-at-midnight-in-tz (t/zone)))
   ([tz] (->
           (t/today)
+          (t/at (t/midnight))
+          (t/in (str tz)))))
+
+
+(defn tomorrow-at-midnight-in-tz
+  ([] (tomorrow-at-midnight-in-tz (t/zone)))
+  ([tz] (->
+          (t/tomorrow)
           (t/at (t/midnight))
           (t/in (str tz)))))
 

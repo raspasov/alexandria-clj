@@ -1,10 +1,8 @@
 (ns ax.react-native.core
-  (:require [react]
-            [react-native]
-            [taoensso.timbre :as timbre]
-            [goog.object :as obj]
-            [ax.react.core :as rc]
-            [cljs-bean.core :as b]))
+  (:require
+    [ax.react.core :as rc]
+    [cljs-bean.core :as b]
+    [react-native]))
 
 
 (def ^js/Object ReactNative react-native)
@@ -98,9 +96,7 @@
   "Remove yellow box warning after 2 sec for convenience"
   []
   (let [f (.. ReactNative -LogBox -ignoreAllLogs)]
-    (f))
-  ;((.. ReactNative -YellowBox -ignoreWarnings) #js["Feature :formatters" "console"])
-  )
+    (f)))
 
 
 (def dev? js/window.__DEV__)

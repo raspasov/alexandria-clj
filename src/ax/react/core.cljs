@@ -41,6 +41,7 @@
             #js[])]
     ?uuid))
 
+
 (defn refresh! []
   (run!
     (fn [f]
@@ -93,45 +94,44 @@
   [^js/Object this]
   (.. this -props -cljs))
 
+
 (defn props-fnc
   "Get props for function components"
   [^js/Object props]
   (.-cljs props))
 
 
-;Basic
-;---------------------------------------------------------------------------------
-;(defn basic-root-component
-;  "Usage:
-;
-;    (basic-root-view {:app-view app-view})
-;
-;  "
-;  [props]
-;  (let [[_ root-refresh-hook] (use-state (random-uuid))
-;        _ (reset! state/*root-refresh-hook root-refresh-hook)
-;        {:keys [app-view]} (props-fnc props)]
-;    (app-view @state/*app-state)))
-;(def basic-root-view (e basic-root-component))
+(defn ^js/Object use-mounted-ref []
+  (let [^js/Object mounted (use-ref false)]
+    (use-effect
+      (fn []
+        (set! (.-current mounted) true)
+        (fn cleanup []
+          (set! (.-current mounted) false)))
+      #js[])
+    mounted))
 
 
-;Advanced
-;---------------------------------------------------------------------------------
-;(defn advanced-root-component
-;  "Usage:
-;
-;   (advanced-root-view
-;    {:app-view         app-view
-;     :*datascript-conn *datascript-conn
-;     :*app-state       *app-state
-;     :app-state-fn     app-state-fn})
-;
-;   "
-;  [props]
-;  (let [[_ root-refresh-hook] (use-state (random-uuid))
-;        _ (reset! state/*root-refresh-hook root-refresh-hook)
-;        {:keys [app-view *app-state app-state-fn]} (props-fnc props)]
-;    (app-view (app-state-fn @*app-state))))
-;(def advanced-root-view (e advanced-root-component))
-;
-;
+(defn prop->hook
+  "Convert a prop value to a local state value. To be used for performance reasons
+   to avoid re-rendering from the root."
+  [path-or-value default]
+  (let [[x hook-f] (use-state default)
+        mounted-obj (use-mounted-ref)]
+
+    (if (vector? path-or-value)
+      (do
+        (ax|state-fns/set-mutable!
+          path-or-value
+          (fn [f]
+            (let [new-x (f x)]
+              (if (true? (.-current mounted-obj))
+                (hook-f new-x)
+                (do
+                  (timbre/warn "Component not mounted" path-or-value new-x)))
+              ;return the new value
+              new-x)))
+        ;return
+        x)
+      ;else, return
+      path-or-value)))

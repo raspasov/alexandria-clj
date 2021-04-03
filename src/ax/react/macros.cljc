@@ -43,12 +43,3 @@
   [directive]
   (list 'js* (str "'" directive "'")))
 
-
-
-
-
-
-
-
-
-

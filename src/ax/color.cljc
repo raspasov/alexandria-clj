@@ -86,7 +86,7 @@
 (defn darker-gray
   ([] (darker-gray 1))
   ([opacity]
-   (str "rgba(36,36,36," opacity ")")))
+   (str "rgba(28,28,30," opacity ")")))
 (def darker-gray-c (memoize darker-gray))
 
 (defn red-orange

@@ -38,7 +38,9 @@
   true)
 
 
-(defn read-local-state [path]
-  (let [f (get-mutable path)]
-    (f identity)))
-
+(defn swap-hook! [k f]
+  (let [path    [:hooks k]
+        ?hook-f (get-mutable [:hooks k])]
+    (if (fn? ?hook-f)
+      (?hook-f f)
+      (timbre/warn "No hook found at path" path))))
