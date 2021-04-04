@@ -112,17 +112,16 @@
             [[a-key-original (key->?destructure-key a-key-original)] (val->?destructure-more a-val)]))
      (completing
        (fn [accum [[a-key-original ?destructure-key] ?destructure-more]]
-         (let [?path  (when ?destructure-key [:left-side ?destructure-key])
-               accum' (if ?path
-                        (update-in accum ?path
+         (let [accum' (if ?destructure-key
+                        (update-in accum [:left-side ?destructure-key]
                           (fn [?v] (conjv ?v (symbol (name a-key-original)))))
                         accum)]
 
            ;print message if a key cannot be destructured
-           (when (nil? ?path)
+           (when (nil? ?destructure-key)
              (println "INFO ::: Map key" (str "'" a-key-original "'") "does not support destructuring"))
 
-           (if (and ?path ?destructure-more)
+           (if (and ?destructure-key ?destructure-more)
              ;'schedule' further destructuring
              (update-in accum' [:destructure-more] conj [(symbol (name a-key-original)) ?destructure-more])
              ;else
