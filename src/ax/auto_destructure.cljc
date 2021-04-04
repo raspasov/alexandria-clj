@@ -5,7 +5,7 @@
 
 
 (defn auto-destructure-let
-  "Writes (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
+  "Prints (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
 
    Given a map m returns the full recursive destructuring form ready for use in regular Clojure (let ...).
    If it encounters a vector which contains maps, it will destructure the first map in the vector.
