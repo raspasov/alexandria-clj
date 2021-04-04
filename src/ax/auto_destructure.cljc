@@ -19,6 +19,22 @@
       (not (some #(= " " %) (seq s))))))
 
 
+(defn print-pretty-let [v-for-let]
+  (transduce
+    (comp
+      (partition-all 2)
+      (map vec)
+      (interpose "\n")
+      (mapcat identity))
+    (completing
+      (fn [accum item]
+        (conj accum item))
+      (fn [accum-final]
+        (println accum-final)))
+    []
+    v-for-let))
+
+
 (defn auto-destructure-let
   "Prints (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
 
@@ -81,7 +97,7 @@
                accum'         (if ?path
                                 (update-in
                                   accum ?path
-                                  (fn [?v] ((fnil conj []) ?v (symbol (name a-key)))))
+                                  (fn [?v] (conjv ?v (symbol (name a-key)))))
                                 accum)
                _              (when (nil? ?path)
                                 (println "INFO ::: Map key" (str "'" a-key "'") "does not support destructuring"))
