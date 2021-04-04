@@ -39,7 +39,7 @@
             :favorite {:music   [{:genre :rock}
                                  {:genre :trance}]
                        :friends #{:bob :clara}}})
-   (auto-destructure m)
+   (auto-destructure-let m)
    ;=>
    [{:keys [name favorite]} m
     {:keys [music friends]} favorite
