@@ -8,7 +8,7 @@
 
 
 (defn can-destructure-string?
- "Naively try to determine if string can be destructured.
+ "Naively try to determine if string can be used for destructuring.
   Incomplete."
  [s]
  (boolean
