@@ -29,8 +29,8 @@
     - keywords
     - qualified keywords
     - symbols
-    - qualified keywords
-    - strings
+    - qualified symbols
+    - strings (not all string keys can be destructured, avoid strings)
 
    Usage:
    ```
