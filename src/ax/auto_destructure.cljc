@@ -129,7 +129,7 @@
              accum')))
        (fn [{:keys [left-side destructure-more] :as accum-final}]
          (let [left-side' (if (:map-in-vector? (meta m)) [left-side] left-side)
-               right-side (if ?symbol ?symbol (symbol "m"))
+               right-side (or ?symbol (symbol "m"))
                output'    [left-side' right-side]
                ret        (reduce
                             (fn [-output' [a-symbol m]]
