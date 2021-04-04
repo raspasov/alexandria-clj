@@ -2,22 +2,25 @@
 
 
 (defn auto-destructure
-  "Given a map m returns the full recursive destructuring form ready for use in regular Clojure.
+  "Writes (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
+
+   Given a map m returns the full recursive destructuring form ready for use in regular Clojure (let ...).
    If it encounters a vector which contains maps, it will destructure the first map in the vector.
    At the moment supports only keywords and qualified keywords. No strings, symbols, etc as map keys.
 
    Usage:
    ```
-   (auto-destructure
-      {:name     :alice
-       :favorite {:music   [{:genre :rock}
-                            {:genre :trance}]
-                  :friends #{:bob :clara}}})
 
+   (def m  {:name     :alice
+            :favorite {:music   [{:genre :rock}
+                                 {:genre :trance}]
+                       :friends #{:bob :clara}}})
+   (auto-destructure m)
    ;=>
    [{:keys [name favorite]} m
     {:keys [music friends]} favorite
     [{:keys [genre]}] music]
+
    ```
    "
   ([m]
