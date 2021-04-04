@@ -35,6 +35,44 @@
     v-for-let))
 
 
+(defn- key->?destructure-key [a-key]
+  (cond
+    (and
+      (keyword? a-key)
+      (qualified-keyword? a-key))
+    (keyword (namespace a-key) "keys")
+
+    (and
+      (keyword? a-key)
+      (not (qualified-keyword? a-key)))
+    (keyword "keys")
+
+    (and
+      (string? a-key)
+      (can-destructure-string? a-key))
+    (keyword "strs")
+
+    (and
+      (symbol? a-key)
+      (qualified-symbol? a-key))
+    (keyword (namespace a-key) "syms")
+
+    (and (symbol? a-key)
+      (not (qualified-symbol? a-key)))
+    (keyword (namespace a-key) "syms")
+
+    :else nil))
+
+
+(defn- val->?destructure-more [a-val]
+  (cond
+    (and
+      (vector? a-val)
+      (map? (first a-val))) (with-meta (first a-val) {:map-in-vector? true})
+    (map? a-val) a-val
+    :else nil))
+
+
 (defn auto-destructure-let
   "Prints (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
 
@@ -69,49 +107,27 @@
    {:pre [(map? m)]}
 
    (transduce
-     (map identity)
+     (map (fn [[a-key-original a-val]]
+            ;transform map entry
+            [[a-key-original (key->?destructure-key a-key-original)] (val->?destructure-more a-val)]))
      (completing
-       (fn [accum [a-key a-val]]
-         (let [?path          (cond
-                                (and (keyword? a-key)
-                                     (qualified-keyword? a-key))
-                                [:left-side (keyword (namespace a-key) "keys")]
+       (fn [accum [[a-key-original ?destructure-key] ?destructure-more]]
+         (let [?path  (when ?destructure-key [:left-side ?destructure-key])
+               accum' (if ?path
+                        (update-in accum ?path
+                          (fn [?v] (conjv ?v (symbol (name a-key-original)))))
+                        accum)]
 
-                                (and (keyword? a-key)
-                                     (not (qualified-keyword? a-key)))
-                                [:left-side (keyword "keys")]
+           ;print message if a key cannot be destructured
+           (when (nil? ?path)
+             (println "INFO ::: Map key" (str "'" a-key-original "'") "does not support destructuring"))
 
-                                (and (string? a-key)
-                                     (can-destructure-string? a-key))
-                                [:left-side (keyword "strs")]
-
-                                (and (symbol? a-key)
-                                     (qualified-symbol? a-key))
-                                [:left-side (keyword (namespace a-key) "syms")]
-
-                                (and (symbol? a-key)
-                                     (not (qualified-symbol? a-key)))
-                                [:left-side (keyword (namespace a-key) "syms")]
-
-                                :else nil)
-               accum'         (if ?path
-                                (update-in
-                                  accum ?path
-                                  (fn [?v] (conjv ?v (symbol (name a-key)))))
-                                accum)
-               _              (when (nil? ?path)
-                                (println "INFO ::: Map key" (str "'" a-key "'") "does not support destructuring"))
-               ?destruct-more (cond
-                                (and (vector? a-val)
-                                     (map? (first a-val))) (with-meta (first a-val) {:map-in-vector? true})
-                                (map? a-val) a-val
-                                :else nil)]
-           (if (and ?path ?destruct-more)
+           (if (and ?path ?destructure-more)
              ;'schedule' further destructuring
-             (update-in accum' [:destruct-more] conj [(symbol (name a-key)) ?destruct-more])
+             (update-in accum' [:destructure-more] conj [(symbol (name a-key-original)) ?destructure-more])
              ;else
              accum')))
-       (fn [{:keys [left-side destruct-more] :as accum-final}]
+       (fn [{:keys [left-side destructure-more] :as accum-final}]
          (let [left-side' (if (:map-in-vector? (meta m)) [left-side] left-side)
                right-side (if ?symbol ?symbol (symbol "m"))
                output'    [left-side' right-side]
@@ -119,10 +135,10 @@
                             (fn [-output' [a-symbol m]]
                               (apply conj -output' (trampoline auto-destructure-let m {:?symbol a-symbol})))
                             output'
-                            destruct-more)]
+                            destructure-more)]
 
            ret)))
-     {:left-side {} :destruct-more []}
+     {:left-side {} :destructure-more []}
      m)))
 
 
