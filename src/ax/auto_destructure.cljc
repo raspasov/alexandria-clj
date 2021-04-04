@@ -48,8 +48,8 @@
    ```
    "
   ([m]
-   (auto-destructure-let m {:?symbol 'm :pretty? true}))
-  ([m {:keys [?symbol pretty?]}]
+   (auto-destructure-let m {:?symbol 'm}))
+  ([m {:keys [?symbol]}]
    {:pre [(map? m)]}
 
    (transduce
