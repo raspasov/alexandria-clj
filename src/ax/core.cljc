@@ -74,3 +74,31 @@
   "Safer (name x)"
   [x]
   ((fpred name #(not (name? %)) "") x))
+
+
+(defn swap-many!
+ "Takes one or more functions and applies them to atom in order, left to right."
+ ([a & fs]
+  (swap! a (apply comp (filter fn? (rseq fs))))))
+
+(comment
+
+ (let [a (atom {})]
+  (swap-many! a
+   #(assoc % :a 1)
+   #(dissoc % :a))
+  ;=> {}
+
+  (swap-many! a
+   #(dissoc % :a)
+   #(assoc % :a 1))
+  ;=> {:a 1}
+
+  (swap-many! a
+   #(dissoc % :a)
+   #(assoc % :a 1)
+   ;ability to skip fn
+   (when false
+    #(assoc % :cant-see-me 42)))
+
+  ))
