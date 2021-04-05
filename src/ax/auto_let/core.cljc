@@ -1,4 +1,4 @@
-(ns ax.auto-destructure)
+(ns ax.auto-let.core)
 
 
 (def conjv (fnil conj []))
@@ -19,7 +19,9 @@
    (not (some #(= " " %) (seq s))))))
 
 
-(defn print-pretty-let [v-for-let]
+(defn pprint-let
+ "Basic pretty print for let statements"
+ [v-for-let]
  (transduce
   (comp
    (partition-all 2)
@@ -73,11 +75,16 @@
   :else nil))
 
 
-(defn auto-destructure-let
- "Prints (let [{:keys []} m]) map destructuring for you. Copy the output, and use in your code.
+(defn de
+ "Prints the vector part of (let [{:keys []} m]) map destructuring for you.
+  Use at the REPL, copy the output, and use in your code.
 
   Given a map m returns the full recursive destructuring form ready for use in regular Clojure (let ...).
+  If a specific key at a specific level of the map cannot be destructured, the destructuring stops there for that key.
+  An INFO message will be printed with the specific key that cannot be destructured.
   If it encounters a vector which contains maps, it will destructure the first map in the vector.
+
+
 
   Supported map keys:
    - keywords
@@ -93,7 +100,7 @@
            :favorite {:music   [{:genre :rock}
                                 {:genre :trance}]
                       :friends #{:bob :clara}}})
-  (auto-destructure-let m)
+  (de m)
   ;=>
   [{:keys [name favorite]} m
    {:keys [music friends]} favorite
@@ -102,7 +109,7 @@
   ```
   "
  ([m]
-  (auto-destructure-let m {:?symbol 'm}))
+  (de m {:?symbol 'm}))
  ([m {:keys [?symbol]}]
   {:pre [(map? m)]}
 
@@ -132,10 +139,9 @@
            output'    [left-side' right-side]
            ret        (reduce
                        (fn [-output' [a-symbol m]]
-                        (apply conj -output' (trampoline auto-destructure-let m {:?symbol a-symbol})))
+                        (apply conj -output' (trampoline de m {:?symbol a-symbol})))
                        output'
                        destructure-more)]
-
       ret)))
    {:left-side {} :destructure-more []}
    m)))
@@ -150,5 +156,9 @@
        m2 {'a      {:b [{:hello :world-1} {:hello :world-2}]}
            "music" {:genre "trance"}}]
 
-  (auto-destructure-let m1)
-  (auto-destructure-let m2)))
+  (de m1)
+
+  (pprint-let
+   (de m2))
+
+  ))
