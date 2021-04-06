@@ -1,4 +1,5 @@
-(ns ax.auto-let.core)
+(ns ax.auto-let.core
+ (:require [taoensso.timbre :as timbre]))
 
 
 (def conjv (fnil conj []))
@@ -37,33 +38,54 @@
   v-for-let))
 
 
-(defn- key->?destructure-key [a-key]
- (cond
-  (and
-   (keyword? a-key)
-   (qualified-keyword? a-key))
-  (keyword (namespace a-key) "keys")
+(defn local+local-indexed
+ [a-key locals]
+ (let [-new-local         (clojure.string/join "-"
+                           (filter string?
+                            [(namespace a-key) (name a-key)]))
+       new-local-no-index (symbol -new-local)
+       new-local-indexed  (if (contains? @locals new-local-no-index)
+                           (do
+                            (symbol (str -new-local "-" (get @locals new-local-no-index))))
+                           new-local-no-index)]
+  [new-local-indexed new-local-no-index]))
 
-  (and
-   (keyword? a-key)
-   (not (qualified-keyword? a-key)))
-  (keyword "keys")
 
-  (and
-   (string? a-key)
-   (can-destructure-string? a-key))
-  (keyword "strs")
+(defn- key->?local [a-key locals]
+ (let [?local (cond
+               (and
+                (keyword? a-key)
+                (qualified-keyword? a-key))
+               (keyword (namespace a-key) "keys")
 
-  (and
-   (symbol? a-key)
-   (qualified-symbol? a-key))
-  (keyword (namespace a-key) "syms")
+               (and
+                (keyword? a-key)
+                (not (qualified-keyword? a-key)))
+               (keyword "keys")
 
-  (and (symbol? a-key)
-   (not (qualified-symbol? a-key)))
-  (keyword (namespace a-key) "syms")
+               (and
+                (string? a-key)
+                (can-destructure-string? a-key))
+               (keyword "strs")
 
-  :else nil))
+               (and
+                (symbol? a-key)
+                (qualified-symbol? a-key))
+               (keyword (namespace a-key) "syms")
+
+               (and (symbol? a-key)
+                (not (qualified-symbol? a-key)))
+               (keyword (namespace a-key) "syms")
+
+               :else nil)]
+
+  (when ?local
+   (let [new-local (symbol (name a-key))]
+    (if (contains? @locals new-local)
+     (let [[new-local-indexed new-local-no-index] (local+local-indexed a-key locals)]
+      [:via-key [a-key new-local-indexed new-local-no-index]])
+     (do
+      [:via-vec [?local new-local]]))))))
 
 
 (defn- val->?destructure-more [a-val]
@@ -73,6 +95,7 @@
    (map? (first a-val))) (with-meta (first a-val) {:map-in-vector? true})
   (map? a-val) a-val
   :else nil))
+
 
 
 (defn de
@@ -110,40 +133,60 @@
   "
  ([m]
   (de m {:?symbol 'm}))
- ([m {:keys [?symbol]}]
+ ([m {:keys [?symbol locals] :or {locals (atom {})}}]
   {:pre [(map? m)]}
 
   (transduce
-   (map (fn [[a-key-original a-val]]
-         ;transform map entry
-         [[a-key-original (key->?destructure-key a-key-original)] (val->?destructure-more a-val)]))
+   (map identity)
    (completing
-    (fn [accum [[a-key-original ?destructure-key] ?destructure-more]]
-     (let [accum' (if ?destructure-key
-                   (update-in accum [:left-side ?destructure-key]
-                    (fn [?v] (conjv ?v (symbol (name a-key-original)))))
-                   accum)]
+    (fn [{:keys [locals] :as accum} [a-key-original a-val]]
+     (let [[?via [?local new-local new-local-no-index]] (key->?local a-key-original locals)
+           ?destructure-more (val->?destructure-more a-val)
+           accum'            (condp = ?via
+                              :via-vec
+                              (update-in accum [:left-side ?local]
+                               (fn [?v] (conjv ?v new-local)))
 
+                              :via-key
+                              (update accum :left-side
+                               (fn [m] (assoc m new-local ?local)))
+
+                              ;else, no change
+                              accum)
+           accum''           accum'
+           local-to-index (or new-local-no-index new-local)]
+
+
+      (when local-to-index
+       (swap! locals update local-to-index (fnil inc 0)))
+
+
+      (timbre/spy new-local)
+      (timbre/spy @locals)
       ;print message if a key cannot be destructured
-      (when (nil? ?destructure-key)
+      (when (nil? ?local)
        (println "INFO ::: Map key" (str "'" a-key-original "'") "does not support destructuring"))
 
-      (if (and ?destructure-key ?destructure-more)
+
+      (if (and ?local ?destructure-more)
        ;'schedule' further destructuring
-       (update-in accum' [:destructure-more] conj [(symbol (name a-key-original)) ?destructure-more])
+       (update-in accum'' [:destructure-more] conj [new-local ?destructure-more])
        ;else
-       accum')))
-    (fn [{:keys [left-side destructure-more] :as accum-final}]
+       accum'')))
+
+    (fn [{:keys [left-side destructure-more locals] :as accum-final}]
      (let [left-side' (if (:map-in-vector? (meta m)) [left-side] left-side)
            right-side (or ?symbol (symbol "m"))
            output'    [left-side' right-side]
            ret        (reduce
                        (fn [-output' [a-symbol m]]
-                        (apply conj -output' (trampoline de m {:?symbol a-symbol})))
+                        (apply conj -output'
+                         (trampoline de m {:?symbol a-symbol :locals locals})))
                        output'
                        destructure-more)]
       ret)))
-   {:left-side {} :destructure-more []}
+   ;reduce accum "state"
+   {:left-side {} :destructure-more [] :locals locals}
    m)))
 
 
