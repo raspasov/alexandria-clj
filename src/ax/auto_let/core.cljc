@@ -44,8 +44,7 @@
                             [(namespace a-key) (name a-key)]))
        new-local-no-index (symbol -new-local)
        new-local-indexed  (if (contains? @locals new-local-no-index)
-                           (do
-                            (symbol (str -new-local "-" (get @locals new-local-no-index))))
+                           (symbol (str -new-local "-" (get @locals new-local-no-index)))
                            new-local-no-index)]
   [new-local-indexed new-local-no-index]))
 
@@ -83,7 +82,7 @@
     (if (contains? @locals new-local)
      (let [[new-local-indexed new-local-no-index] (local+local-indexed a-key locals)]
       [:via-key [a-key new-local-indexed new-local-no-index]])
-     (do
+     (let []
       [:via-vec [?local new-local]]))))))
 
 
@@ -94,7 +93,6 @@
    (map? (first a-val))) (with-meta (first a-val) {:map-in-vector? true})
   (map? a-val) a-val
   :else nil))
-
 
 
 (defn de
@@ -153,7 +151,7 @@
                               ;else, no change
                               accum)
            accum''           accum'
-           local-to-index (or new-local-no-index new-local)]
+           local-to-index    (or new-local-no-index new-local)]
 
 
       (when local-to-index
@@ -192,10 +190,12 @@
                                 {:genre :trance}]
                       :friends #{:bob :clara}}}
 
-       m2 {'a      {:b [{:hello :world-1} {:hello :world-2}]}
+       m2 {'a      {:b [{:hello :world-1
+                         :b     42}]}
            "music" {:genre "trance"}}]
 
-  (de m1)
+  (pprint-let
+   (de m1))
 
   (pprint-let
    (de m2))
