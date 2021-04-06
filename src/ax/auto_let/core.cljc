@@ -1,5 +1,4 @@
-(ns ax.auto-let.core
- (:require [taoensso.timbre :as timbre]))
+(ns ax.auto-let.core)
 
 
 (def conjv (fnil conj []))
@@ -160,9 +159,6 @@
       (when local-to-index
        (swap! locals update local-to-index (fnil inc 0)))
 
-
-      (timbre/spy new-local)
-      (timbre/spy @locals)
       ;print message if a key cannot be destructured
       (when (nil? ?local)
        (println "INFO ::: Map key" (str "'" a-key-original "'") "does not support destructuring"))
