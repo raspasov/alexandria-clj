@@ -44,3 +44,10 @@
     (if (fn? ?hook-f)
       (?hook-f f)
       (timbre/warn "No hook found at path" path))))
+
+
+(defn hook-state []
+  (into
+    {}
+    (map (fn [[k f]] [k (f identity)]))
+    (get-mutable [:hooks])))
