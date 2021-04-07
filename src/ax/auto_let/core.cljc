@@ -136,7 +136,7 @@
                       :friends #{:bob :clara}}})
   (de m)
   ;=>
-  [{:keys [name favorite]} m
+  [{:keys [name favorite]} your-map
    {:keys [music friends]} favorite
    [{:keys [genre]}] music]
 
@@ -207,6 +207,7 @@
 
 
 (comment
+ ;USAGE
  (let [m1 {:name     :alice
            :favorite {:music   [{:genre :rock}
                                 {:genre :trance}]
@@ -220,7 +221,5 @@
    (de m1))
 
   (pprint-let
-   (de m2))
-
-  ))
+   (de m2))))
 
