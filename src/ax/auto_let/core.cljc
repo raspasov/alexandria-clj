@@ -100,7 +100,6 @@
   (map? a-val) a-val
   :else nil))
 
-(defonce *a (atom nil))
 
 (defn prepare-a-key
  "Special case for symbols destructuring like {a (quote a)}"
@@ -170,9 +169,7 @@
 
 
       (when local-to-index
-       (swap! locals-index update local-to-index (fnil inc 1))
-
-       (reset! *a locals-index))
+       (swap! locals-index update local-to-index (fnil inc 1)))
 
       ;print message if a key cannot be destructured
       (when (nil? ?via)
