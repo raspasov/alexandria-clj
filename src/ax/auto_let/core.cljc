@@ -136,7 +136,7 @@
                       :friends #{:bob :clara}}})
   (de m)
   ;=>
-  [{:keys [name favorite]} your-map
+  [{:keys [name favorite]} m
    {:keys [music friends]} favorite
    [{:keys [genre]}] music]
 
@@ -191,7 +191,7 @@
      (let [left-side' (if (:map-in-vector? (meta m))
                        [left-side]
                        left-side)
-           right-side (or ?symbol (symbol "your-map"))
+           right-side (or ?symbol (symbol "m"))
            output'    [left-side' right-side]
            ret        (reduce
                        (fn [-output' [a-symbol m]]
