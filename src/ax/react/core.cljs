@@ -60,8 +60,8 @@
   "Takes x which is immutable ClojureScript data and wraps it in a #js{} object to be passed to React components"
   [x]
   (if-let [k (get x :key)]
-    #js{:cljs x :key k}
-    #js{:cljs x}))
+    #js{:_cljs x :key k}
+    #js{:_cljs x}))
 (def cljs-props (memoize -cljs-props))
 
 
@@ -92,13 +92,13 @@
 (defn props-class
   "Get props for class components"
   [^js/Object this]
-  (.. this -props -cljs))
+  (.. this -props -_cljs))
 
 
 (defn props-fnc
   "Get props for function components"
   [^js/Object props]
-  (.-cljs props))
+  (.-_cljs props))
 
 
 (defn ^js/Object use-mounted-ref []
