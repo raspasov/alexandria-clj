@@ -1,5 +1,4 @@
-(ns ss.auto-let.core
- (:require [taoensso.timbre :as timbre]))
+(ns ss.auto-let.core)
 
 
 (def conjv (fnil conj []))
@@ -181,7 +180,6 @@
        (update-in accum' [:destructure-more] conj [new-local ?destructure-more])
        ;else
        (do
-        (timbre/info "READY")
         accum'))))
 
     (fn [{:keys [left-side destructure-more locals-index] :as accum-final}]
@@ -193,7 +191,7 @@
            ret        (reduce
                        (fn [-output' [a-symbol m]]
                         (apply conj -output'
-                         (trampoline de m {:?symbol a-symbol :locals-index locals-index})))
+                         (de m {:?symbol a-symbol :locals-index locals-index})))
                        output'
                        destructure-more)]
 
