@@ -22,14 +22,14 @@
   (get-in @state/*mutable-state (build-vector-mem k-or-ks)))
 
 
-(defn ^js/cljs.core.IFn save-global-ref-f
+(defn ^js/cljs.core.IFn save-ref-f
   "Returns a function to be used for saving a ref in the global mutable state;
    Use under :ref in React"
   [k]
   (fn [a-ref] (when a-ref (set-mutable! [:refs k] a-ref))))
 
 
-(defn ^js/Object get-global-ref [k]
+(defn ^js/Object ref [k]
   (get-in @state/*mutable-state [:refs k]))
 
 

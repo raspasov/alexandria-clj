@@ -1,8 +1,8 @@
 (ns ss.react-native.core
-  (:require
-    [ss.react.core :as rc]
-    [cljs-bean.core :as b]
-    [react-native]))
+ (:require
+  [ss.react.core :as rc]
+  [cljs-bean.core :as b]
+  [react-native]))
 
 
 (def ^js/Object ReactNative react-native)
@@ -14,16 +14,22 @@
 (def runAfterInteractions (.. ReactNative -InteractionManager -runAfterInteractions))
 
 
+(defn measure
+ "Callback receives args like [x y width height pageX pageY]"
+ [^js/Object ref callback]
+ (.measure ref callback))
+
+
 (defn- -get-alert-fn [] (.. ReactNative -Alert -alert))
 
 
 (defn alert
-  ([title]
-   ((-get-alert-fn) title))
-  ([title message]
-   ((-get-alert-fn) title message #js[]))
-  ([title message button-specs]
-   ((-get-alert-fn) title message (b/->js button-specs))))
+ ([title]
+  ((-get-alert-fn) title))
+ ([title message]
+  ((-get-alert-fn) title message #js[]))
+ ([title message button-specs]
+  ((-get-alert-fn) title message (b/->js button-specs))))
 
 
 (def view (partial rc/create-element-js (.-View ReactNative)))
@@ -46,6 +52,7 @@
 (def touchable-opacity (partial rc/create-element-js (.-TouchableOpacity ReactNative)))
 (def touchable-opacity|a (partial rc/create-element-js (createAnimatedComponent (.-TouchableOpacity ReactNative))))
 
+(def pressable (partial rc/create-element-js (.-Pressable ReactNative)))
 
 
 (def modal (partial rc/create-element-js (.-Modal ReactNative)))
@@ -76,15 +83,15 @@
 
 
 (defn ios? []
-  (= "ios" platform))
+ (= "ios" platform))
 
 
 (defn android? []
-  (= "android" platform))
+ (= "android" platform))
 
 
 (defn web? []
-  (= "web" platform))
+ (= "web" platform))
 
 
 ;Animated
@@ -93,10 +100,10 @@
 
 
 (defn remove-yellow-box
-  "Remove yellow box warning after 2 sec for convenience"
-  []
-  (let [f (.. ReactNative -LogBox -ignoreAllLogs)]
-    (f)))
+ "Remove yellow box warning after 2 sec for convenience"
+ []
+ (let [f (.. ReactNative -LogBox -ignoreAllLogs)]
+  (f)))
 
 
 (def dev? js/window.__DEV__)
