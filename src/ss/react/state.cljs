@@ -34,7 +34,10 @@
 (defn *conn [] @*-conn)
 
 
+(defonce datascript-ready-ch (a/promise-chan))
+
 (defn set-datascript-ready []
+ (a/put! datascript-ready-ch :ready/datascript)
  (swap! *app-state assoc :ready/datascript? true))
 
 (defn new-datascript-conn

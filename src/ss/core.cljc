@@ -84,6 +84,8 @@
 
 (def mapv-indexed (comp vec map-indexed))
 
+(def removev (comp vec remove))
+
 
 (comment
 

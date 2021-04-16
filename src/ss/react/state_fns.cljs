@@ -26,11 +26,14 @@
   "Returns a function to be used for saving a ref in the global mutable state;
    Use under :ref in React"
   [k]
-  (fn [a-ref] (when a-ref (set-mutable! [:refs k] a-ref))))
+  (fn [a-ref]
+    (when a-ref (set-mutable! [:refs k] a-ref))))
 
 
 (defn ^js/Object ref [k]
-  (get-in @state/*mutable-state [:refs k]))
+  (if-let [a-ref (get-in @state/*mutable-state [:refs k])]
+    a-ref
+    (timbre/warn "No ref found for k" k)))
 
 
 (defn touch []

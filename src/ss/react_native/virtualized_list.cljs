@@ -24,11 +24,7 @@
            :getItemCount          (fn [data] (count data))
            ;needs to return a key as string
            :keyExtractor          (fn [[_ idx]] (str idx))
-           :ref                   (fn [ref]
-                                    (when ref-key
-                                      ;(timbre/info "saving ref..." ref-key)
-                                      ;(timbre/spy ref)
-                                      (state-fns/set-mutable! [:refs ref-key] ref)))
+           :ref                   (state-fns/save-ref-f ref-key)
            :initialNumToRender    initialNumToRender
            :scrollEnabled         scrollEnabled
            :pagingEnabled         pagingEnabled
