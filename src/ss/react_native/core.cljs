@@ -95,6 +95,25 @@
  (.removeListener Keyboard event-name))
 
 
+(defn use-keyboard
+ "Helper hook for Keyboard"
+ []
+ (let [[kb-status set-kb-status :as ret] (rc/use-state nil)
+       kb-show (fn [] (set-kb-status :kb/shown))
+       kb-hide (fn [] (set-kb-status :kb/hidden))
+       _       (rc/use-effect
+                (fn []
+                 (keyboard-add-listener "keyboardWillShow" kb-show)
+                 (keyboard-add-listener "keyboardDidShow" kb-show)
+                 (keyboard-add-listener "keyboardDidHide" kb-hide)
+                 (fn cleanup []
+                  (keyboard-remove-listener "keyboardWillShow")
+                  (keyboard-remove-listener "keyboardDidShow")
+                  (keyboard-remove-listener "keyboardDidHide")))
+                #js[])]
+  ret))
+
+
 (defn ios? []
  (= "ios" platform))
 
