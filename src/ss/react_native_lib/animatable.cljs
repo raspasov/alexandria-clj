@@ -1,8 +1,8 @@
 (ns ss.react-native-lib.animatable
-  (:require [react-native-animatable :as -rna]
-            [ss.react.core :as rc]
-            [cljs-bean.core :as b]
-            [ss.react-native.dimensions :as dm]))
+ (:require [react-native-animatable :as -rna]
+           [ss.react.core :as rc]
+           [cljs-bean.core :as b]
+           [ss.react-native.dimensions :as dm]))
 
 (def ^js/Object rna -rna)
 
@@ -14,8 +14,12 @@
 
 
 (def animatable-registry
-  (.initializeRegistryWithDefinitions
-    rna
-    (b/->js
-      {:removeFromList {:useNativeDriver true
-                        :from            {:height (dm/<> 100)} :to {:height 0} :duration 200}})))
+ (.initializeRegistryWithDefinitions
+  rna
+  (b/->js
+   {:removeFromList {:useNativeDriver true
+                     :from            {:height (dm/<> 100)}
+                     :to              {:height 0} :duration 200}
+    :bounceBounce   {0   {:scale 1}
+                     0.3 {:scale 0.95}
+                     1   {:scale 1}}})))

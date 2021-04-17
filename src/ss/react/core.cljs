@@ -26,6 +26,17 @@
 (def use-effect (.-useEffect React))
 
 
+(defn use-swap
+ "Acts like (swap! ...).
+  Instead of set-x returns a function swap-x.
+  swap-x is a function of one argument. Takes a fn which will be called with the current x.
+  The result of swap-x is then used to set-x."
+ [x]
+ (let [[x set-x] (use-state x)
+       swap-x (fn [f] (set-x (f x)))]
+  [x swap-x]))
+
+
 (defn native-event
  "Extracts the nativeEvent from a React SyntheticEvent."
  [^js/Object synthetic-event]

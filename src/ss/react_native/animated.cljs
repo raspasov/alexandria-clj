@@ -47,9 +47,9 @@
     (.setValue anim-value x)
     #_(timbre/warn (ex-info "anim-value is not an Animated value" {:arguments [anim-value x]}))))
 
-(defn i
+(defn ie
   ([^js/Object anim-value input-range output-range extrapolate]
-   (i anim-value input-range output-range extrapolate nil))
+   (ie anim-value input-range output-range extrapolate nil))
   ([^js/Object anim-value input-range output-range extrapolate default-value]
    (if (instance? js/Object anim-value)
      (.interpolate

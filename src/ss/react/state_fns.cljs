@@ -24,10 +24,18 @@
 
 (defn ^js/cljs.core.IFn save-ref-f
   "Returns a function to be used for saving a ref in the global mutable state;
-   Use under :ref in React"
-  [k]
-  (fn [a-ref]
-    (when a-ref (set-mutable! [:refs k] a-ref))))
+   Use under :ref in React.
+
+   Optional callback should be like (fn [a-ref k])"
+  ([k]
+   (save-ref-f k nil))
+  ([k callback]
+   (fn [a-ref]
+     (when a-ref
+       (let [ret (set-mutable! [:refs k] a-ref)]
+         (when (fn? callback)
+           (callback a-ref k))
+         ret)))))
 
 
 (defn ^js/Object ref [k]
