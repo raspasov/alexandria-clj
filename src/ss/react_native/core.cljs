@@ -82,6 +82,19 @@
 (def platform (.. ReactNative -Platform -OS))
 
 
+(def ^js/Object Keyboard (.-Keyboard ReactNative))
+
+(defn keyboard-dismiss []
+ (.dismiss Keyboard))
+
+(defn keyboard-add-listener [^js/String event-name f]
+ (.addListener Keyboard event-name f))
+
+
+(defn keyboard-remove-listener [^js/String event-name]
+ (.removeListener Keyboard event-name))
+
+
 (defn ios? []
  (= "ios" platform))
 
