@@ -33,6 +33,10 @@
        (timing anim-value {:toValue x :duration 1}))
      anim-value)))
 
+
+(defn value [k-or-ks]
+  (ax|state-fns/get-mutable k-or-ks))
+
 (defn math* [^js/Object anim-value-x ^js/Object anim-value-y]
   (let [f (.-Animated.multiply rn/ReactNative)]
     (f anim-value-x anim-value-y)))

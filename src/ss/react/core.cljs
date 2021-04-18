@@ -20,10 +20,21 @@
 (def use-ref (.-useRef React))
 
 
+(defn current [^js/Object ref]
+ (.-current ref))
+
+
 (declare use-effect)
 
 
 (def use-effect (.-useEffect React))
+
+
+(defn use-effect-once
+ "useEffect with empty #js[]
+  Similar to componentDidMount/componentWillUnmount"
+ [f]
+ (use-effect f #js[]))
 
 
 (defn use-swap
@@ -45,7 +56,7 @@
 
 (defn use-refresh []
  (let [[?uuid refresh-hook] (use-state (random-uuid))
-       _ (use-effect
+       _ (use-effect-once
           (fn []
            (timbre/info "add: auto-refresh-hook")
            (ax|state-fns/update-mutable! :auto-refresh-hooks
@@ -54,8 +65,7 @@
            (fn cleanup []
             (ax|state-fns/update-mutable! :auto-refresh-hooks
              (fn [?set] ((fnil disj #{}) ?set refresh-hook)))
-            (timbre/info "cleanup: auto-refresh-hook")))
-          #js[])]
+            (timbre/info "cleanup: auto-refresh-hook"))))]
   ?uuid))
 
 
@@ -120,12 +130,11 @@
 
 (defn ^js/Object use-mounted-ref []
  (let [^js/Object mounted (use-ref false)]
-  (use-effect
+  (use-effect-once
    (fn []
     (set! (.-current mounted) true)
     (fn cleanup []
-     (set! (.-current mounted) false)))
-   #js[])
+     (set! (.-current mounted) false))))
   mounted))
 
 
