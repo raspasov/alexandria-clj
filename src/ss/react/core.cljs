@@ -112,7 +112,7 @@
  (.. this -props -_cljs))
 
 
-(defn props-fnc
+(defn props
  "Get props for function components"
  [^js/Object props]
  (.-_cljs props))

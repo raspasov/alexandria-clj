@@ -15,7 +15,7 @@
   [props]
   (let [[_ root-refresh-hook] (rc/use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view]} (rc/props-fnc props)]
+        {:keys [app-view]} (rc/props props)]
     (app-view @state/*app-state)))
 (def basic-root-view (rc/e basic-root-component))
 
@@ -35,7 +35,7 @@
   [props]
   (let [[_ root-refresh-hook] (rc/use-state (random-uuid))
         _ (reset! state/*root-refresh-hook root-refresh-hook)
-        {:keys [app-view *app-state app-state-fn]} (rc/props-fnc props)]
+        {:keys [app-view *app-state app-state-fn]} (rc/props props)]
     (app-view (app-state-fn @*app-state))))
 (def advanced-root-view (rc/e advanced-root-component))
 

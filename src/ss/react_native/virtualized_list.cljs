@@ -13,7 +13,7 @@
   (let [{:keys [data ref-key horizontal windowSize initialNumToRender scrollEnabled pagingEnabled onMomentumScrollEnd onMomentumScrollBegin]
          :or   {horizontal          false windowSize 1 initialNumToRender 1 scrollEnabled true pagingEnabled true
                 onMomentumScrollEnd (fn [e]) onMomentumScrollBegin (fn [e])}
-         :as   props} (rc/props-fnc props)
+         :as   props} (rc/props props)
         props-no-data (dissoc props :data)]
     (r/virtualized-list
       (-> {:getItem               (fn [data idx]
