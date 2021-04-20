@@ -138,6 +138,10 @@
   mounted))
 
 
+(defn mounted? [mounted-obj]
+ (true? (.-current mounted-obj)))
+
+
 (defn prop->hook
  "Convert a prop value to a local state value. To be used for performance reasons
   to avoid re-rendering from the root."
@@ -151,7 +155,7 @@
      path-or-value
      (fn [f]
       (let [new-x (f x)]
-       (if (true? (.-current mounted-obj))
+       (if (mounted? mounted-obj)
         (hook-f new-x)
         (do
          (timbre/warn "Component not mounted" path-or-value new-x)))

@@ -2,7 +2,8 @@
  (:require
   [ss.react.core :as rc]
   [cljs-bean.core :as b]
-  [react-native]))
+  [react-native]
+  [taoensso.timbre :as timbre]))
 
 
 (def ^js/Object ReactNative react-native)
@@ -89,30 +90,45 @@
  (.dismiss Keyboard))
 
 
-(defn keyboard-add-listener [^js/String event-name f]
- (.addListener Keyboard event-name f))
+(defn keyboard-add-listener
+ "Add a Keyboard listener."
+ [^js/String event-name callback]
+ (.addListener Keyboard event-name callback))
 
 
-(defn keyboard-remove-listener [^js/String event-name]
- (.removeListener Keyboard event-name))
+(defn keyboard-remove-listener
+ "Removes a SPECIFIC listener for a Keyboard event-name.
+  IMPORTANT: Original callback fn must be provided."
+ [^js/String event-name callback]
+ (.removeListener Keyboard event-name callback))
 
 
-(defn use-keyboard
- "Helper hook for Keyboard"
+(defn keyboard-remove-all-listeners
+ "Remove ALL listeners for a Keyboard event-name."
+ [^js/String event-name]
+ (.removeAllListeners Keyboard event-name))
+
+
+(defn use-keyboard-status
+ "Helper hook for Keyboard status.
+  Returns nil until keyboard is shown for the first time.
+  Return values #{:kb/shown :kb/hidden nil}"
  []
  (let [[kb-status set-kb-status :as ret] (rc/use-state nil)
-       kb-show (fn [] (set-kb-status :kb/shown))
-       kb-hide (fn [] (set-kb-status :kb/hidden))
-       _       (rc/use-effect
-                (fn []
-                 (keyboard-add-listener "keyboardWillShow" kb-show)
-                 (keyboard-add-listener "keyboardDidShow" kb-show)
-                 (keyboard-add-listener "keyboardDidHide" kb-hide)
-                 (fn cleanup []
-                  (keyboard-remove-listener "keyboardWillShow")
-                  (keyboard-remove-listener "keyboardDidShow")
-                  (keyboard-remove-listener "keyboardDidHide")))
-                #js[])]
+       kb-show     (fn [] (set-kb-status :kb/shown))
+       kb-hide     (fn [] (set-kb-status :kb/hidden))
+       _           (rc/use-effect
+                    (fn []
+                     (timbre/info "use-keyboard init")
+                     (keyboard-add-listener "keyboardWillShow" kb-show)
+                     (keyboard-add-listener "keyboardDidShow" kb-show)
+                     (keyboard-add-listener "keyboardDidHide" kb-hide)
+                     (fn cleanup []
+                      (timbre/info "use-keyboard cleanup")
+                      (keyboard-remove-listener "keyboardWillShow" kb-show)
+                      (keyboard-remove-listener "keyboardDidShow" kb-show)
+                      (keyboard-remove-listener "keyboardDidHide" kb-hide)))
+                    #js[])]
   ret))
 
 
