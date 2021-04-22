@@ -138,11 +138,11 @@
   mounted))
 
 
-(defn mounted? [mounted-obj]
+(defn mounted? [^js/Object mounted-obj]
  (true? (.-current mounted-obj)))
 
 
-(defn prop->hook
+(defn use-prop->hook
  "Convert a prop value to a local state value. To be used for performance reasons
   to avoid re-rendering from the root."
  [path-or-value default]
