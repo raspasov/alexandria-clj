@@ -128,14 +128,16 @@
  (.-_cljs props))
 
 
-(defn ^js/Object use-mounted-ref []
- (let [^js/Object mounted (use-ref false)]
+(defn ^js/Object use-mounted-obj
+ "Returns a (mutable) mounted-obj which can used to check if the component is currently mounted."
+ []
+ (let [^js/Object mounted-obj (use-ref false)]
   (use-effect-once
    (fn []
-    (set! (.-current mounted) true)
+    (set! (.-current mounted-obj) true)
     (fn cleanup []
-     (set! (.-current mounted) false))))
-  mounted))
+     (set! (.-current mounted-obj) false))))
+  mounted-obj))
 
 
 (defn mounted? [^js/Object mounted-obj]
@@ -143,12 +145,11 @@
 
 
 (defn use-prop->hook
- "Convert a prop value to a local state value. To be used for performance reasons
+ "'Convert' a prop value to a local state value. To be used for performance reasons
   to avoid re-rendering from the root."
  [path-or-value default]
  (let [[x hook-f] (use-state default)
-       mounted-obj (use-mounted-ref)]
-
+       mounted-obj (use-mounted-obj)]
   (if (vector? path-or-value)
    (do
     (ax|state-fns/set-mutable!
