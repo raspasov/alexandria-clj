@@ -1,4 +1,5 @@
-(ns ss.react.core)
+(ns ss.react.core
+ (:require [ss.core :as ss.c]))
 
 
 (defmacro e
@@ -31,14 +32,6 @@
    elements)))
 
 
-(defn positions
- [pred coll]
- (keep-indexed (fn [idx x]
-                (when (pred x)
-                 idx))
-  coll))
-
-
 (defmacro defnrc
  "A simple macro which outputs a (defn ... ) like this:
 
@@ -55,7 +48,7 @@
  [& args]
  (let [ret#             `(defn ~@args)
        ;find the args index (in case of docstrings, etc)
-       args-vector-idx# (first (positions vector? ret#))
+       args-vector-idx# (first (ss.c/positions vector? ret#))
        ;the args themselves
        args-vector#     (nth ret# args-vector-idx#)
        ;split (defn ...) into parts
@@ -65,7 +58,7 @@
        part-3-body#     (drop (inc args-vector-idx#) ret#)
        ;MAIN PART: modify part 3 by "shadowing" the first argument
        part-3-body'#    (vector
-                         `(let [~(symbol (first args-vector#))
+                         `(let [~(first args-vector#)
                                 (ss.react.core/props ~(first args-vector#))]
                            ~@part-3-body#))]
   ;concat all parts and return
@@ -73,6 +66,7 @@
    part-1-defn#
    part-2-args#
    part-3-body'#)))
+
 
 
 

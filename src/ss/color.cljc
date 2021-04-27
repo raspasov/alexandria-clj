@@ -25,7 +25,7 @@
  ([] (-white 1))
  ([opacity]
   (str "rgba(255,255,255," opacity ")")))
-(def white (memoize -white))
+(def wh (memoize -white))
 
 (def t "transparent")
 
@@ -33,7 +33,7 @@
  ([] (-black 1))
  ([opacity]
   (str "rgba(0,0,0," opacity ")")))
-(def black (memoize -black))
+(def bl (memoize -black))
 
 (defn green
  ([] (green 1))
@@ -72,7 +72,7 @@
 (defn dark-gray
  ([] (dark-gray 1))
  ([opacity]
-  (str "rgba(52,52,52," opacity ")")))
+  (str "rgba(40,40,40," opacity ")")))
 (def dark-gray-c (memoize dark-gray))
 
 (defn gray []
@@ -116,7 +116,7 @@
   (str "rgba(252,252,252," opacity ")")))
 
 (defn get-shadow
- [{:keys [color opacity offset radius] :or {color (black) opacity 0.7 offset {:height 0 :width 0} radius 8}}]
+ [{:keys [color opacity offset radius] :or {color (bl) opacity 0.7 offset {:height 0 :width 0} radius 8}}]
  {:shadowColor   color
   :shadowOpacity opacity
   :shadowRadius  radius

@@ -16,8 +16,8 @@
      :height (.-height window)
      :scale  (.-scale window)}))
 
-(defn width [] (:width (get-window)))
-(defn height [] (:height (get-window)))
+(defn ww [] (:width (get-window)))
+(defn hh [] (:height (get-window)))
 
 (defn get-device-relative-scale []
   (/ (.-width (get-window-obj)) 375))

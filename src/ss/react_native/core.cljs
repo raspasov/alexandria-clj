@@ -83,6 +83,7 @@
 (def platform (.. ReactNative -Platform -OS))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Keyboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (def ^js/Object Keyboard (.-Keyboard ReactNative))
 
 
@@ -115,21 +116,56 @@
   Return values #{:kb/shown :kb/hidden nil}"
  []
  (let [[kb-status set-kb-status :as ret] (rc/use-state nil)
-       kb-show     (fn [] (set-kb-status :kb/shown))
-       kb-hide     (fn [] (set-kb-status :kb/hidden))
-       _           (rc/use-effect
-                    (fn []
-                     (timbre/info "use-keyboard init")
-                     (keyboard-add-listener "keyboardWillShow" kb-show)
-                     (keyboard-add-listener "keyboardDidShow" kb-show)
-                     (keyboard-add-listener "keyboardDidHide" kb-hide)
-                     (fn cleanup []
-                      (timbre/info "use-keyboard cleanup")
-                      (keyboard-remove-listener "keyboardWillShow" kb-show)
-                      (keyboard-remove-listener "keyboardDidShow" kb-show)
-                      (keyboard-remove-listener "keyboardDidHide" kb-hide)))
-                    #js[])]
+       kb-show (fn [] (set-kb-status :kb/shown))
+       kb-hide (fn [] (set-kb-status :kb/hidden))
+       _       (rc/use-effect-once
+                (fn []
+                 (timbre/info "use-keyboard init")
+                 (keyboard-add-listener "keyboardWillShow" kb-show)
+                 (keyboard-add-listener "keyboardDidShow" kb-show)
+                 (keyboard-add-listener "keyboardDidHide" kb-hide)
+                 (fn cleanup []
+                  (timbre/info "use-keyboard cleanup")
+                  (keyboard-remove-listener "keyboardWillShow" kb-show)
+                  (keyboard-remove-listener "keyboardDidShow" kb-show)
+                  (keyboard-remove-listener "keyboardDidHide" kb-hide))))]
   ret))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Keyboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; AppState ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(def ^js/Object AppState (.-AppState ReactNative))
+
+
+(defn app-state-add-listener [event-name f]
+ (.addEventListener AppState event-name f))
+
+
+(defn app-state-remove-listener [event-name f]
+ (.removeEventListener AppState event-name f))
+
+
+(defn use-app-state
+ "Helper hook for app-state.
+  Also sets up memory warning message to be printed."
+ []
+ (let [[current-app-state set-current-app-state :as ret] (rc/use-state "active")
+       -set-app-state (fn [next-app-state]
+                       (timbre/spy ["set-current-app-state" next-app-state])
+                       (set-current-app-state next-app-state))
+       memory-warning (fn [& args]
+                       (timbre/warn "memoryWarning")
+                       (timbre/info "memoryWarning args" args))
+
+       _              (rc/use-effect-once
+                       (fn []
+                        (app-state-add-listener "change" -set-app-state)
+                        (app-state-add-listener "memoryWarning" memory-warning)
+                        (fn cleanup []
+                         (app-state-remove-listener "change" -set-app-state)
+                         (app-state-remove-listener "memoryWarning" memory-warning))))]
+  ret))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; AppState ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (defn ios? []

@@ -87,6 +87,24 @@
 (def removev (comp vec remove))
 
 
+(defn positions
+ [pred coll]
+ (keep-indexed
+  (fn [idx x] (when (pred x) idx))
+  coll))
+
+
+(defn print-separator [msg]
+ (let [filler-cnt      (- 78 (count msg))
+       half-filler-cnt (/ (int filler-cnt) 2)
+       half-filler     (apply str (repeat half-filler-cnt ";"))]
+
+  (println
+   half-filler
+   msg
+   half-filler)))
+
+
 (comment
 
  (let [a (atom {})]

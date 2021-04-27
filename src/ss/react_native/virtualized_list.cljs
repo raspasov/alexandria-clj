@@ -24,7 +24,7 @@
            :getItemCount          (fn [data] (count data))
            ;needs to return a key as string
            :keyExtractor          (fn [[_ idx]] (str idx))
-           :ref                   (state-fns/save-ref-f ref-key)
+           :ref                   (state-fns/save-ref ref-key)
            :initialNumToRender    initialNumToRender
            :scrollEnabled         scrollEnabled
            :pagingEnabled         pagingEnabled
@@ -49,13 +49,13 @@
 
 (defn get-scroll-idx-via-x
   ([^js/React.SyntheticEvent e]
-   (get-scroll-idx-via-x e (dm/width)))
+   (get-scroll-idx-via-x e (dm/ww)))
   ([^js/React.SyntheticEvent e a-width]
    (js/Math.round (/ (.. e -nativeEvent -contentOffset -x) a-width))))
 
 (defn get-scroll-idx-via-y
   ([^js/React.SyntheticEvent e]
-   (get-scroll-idx-via-y e (dm/height)))
+   (get-scroll-idx-via-y e (dm/hh)))
   ([^js/React.SyntheticEvent e a-height]
    (js/Math.round (/ (.. e -nativeEvent -contentOffset -y) a-height))))
 
