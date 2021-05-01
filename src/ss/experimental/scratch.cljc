@@ -4,8 +4,8 @@
 
 ;Specter-like
 (defn find-in-data []
- (let [x    {:a {:b [{:n 1 :k "q"} {:n 1 :k "w"} {:n 1 :k "e"}]}}
-       path [:a :b]
+ (let [x    {:au {:b [{:n 1 :k "q"} {:n 1 :k "w"} {:n 1 :k "e"}]}}
+       path [:au :b]
        ;find idx based on pred
        idx (first
             (ss.c/positions
