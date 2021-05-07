@@ -1,4 +1,6 @@
-(ns ss.core)
+(ns ss.core
+ #?(:cljs
+    (:require-macros ss.core)))
 
 (defn deep-merge-with
  "Like merge-with, but merges maps recursively, applying the given fn
@@ -105,24 +107,25 @@
    half-filler)))
 
 
-(comment
+(defmacro some-as->
+ "Like some-> and as-> combined.
+  Short-circuits on the first nil.
 
- (let [a (atom {})]
-  (swap-many! a
-   #(assoc % :a 1)
-   #(dissoc % :a))
-  ;=> {}
+  ;Example
+  (some-as-> {:a 42} x
+   ;nil!
+   (:not-there x)
+   (inc x))
+  ;=> nil
 
-  (swap-many! a
-   #(dissoc % :a)
-   #(assoc % :a 1))
-  ;=> {:a 1}
+  "
+ [expr name & forms]
+ (let [steps (map (fn [step] `(if (nil? ~name) nil ~step))
+              forms)]
+  `(let [~name ~expr
+         ~@(interleave (repeat name) (butlast steps))
+         ]
+    ~(if (empty? steps)
+      name
+      (last steps)))))
 
-  (swap-many! a
-   #(dissoc % :a)
-   #(assoc % :a 1)
-   ;ability to skip fn
-   (when false
-    #(assoc % :cant-see-me 42)))
-
-  ))

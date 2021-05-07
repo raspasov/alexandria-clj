@@ -64,20 +64,22 @@
   "IMPORTANT :getItemLayout must specified for this to work"
   [^js/ReactNative.VirtualizedList vl idx]
   (try
-    (.scrollToIndex vl (b/->js {:index idx}))
+    (.scrollToIndex vl (b/->js {:index idx :animated true}))
     (catch js/Error e (do)))
   (try
-    (.scrollToIndex (.. vl -_component) (b/->js {:index idx}))
+    (.scrollToIndex (.. vl -_component) (b/->js {:index idx :animated true}))
     (catch js/Error e (do))))
 
 (defn scroll-to-offset
-  [^js/ReactNative.VirtualizedList vl offset]
-  (try
-    (.scrollToOffset vl (b/->js {:offset offset}))
-    (catch js/Error e (do)))
-  (try
-    (.scrollToOffset (.. vl -_component) (b/->js {:offset offset :animated true}))
-    (catch js/Error e (do))))
+  ([^js/Object vl offset]
+   (scroll-to-offset vl offset true))
+  ([^js/Object vl offset animated?]
+   (try
+     (.scrollToOffset vl (b/->js {:offset offset :animated animated?}))
+     (catch js/Error e (do)))
+   (try
+     (.scrollToOffset (.. vl -_component) (b/->js {:offset offset :animated animated?}))
+     (catch js/Error e (do)))))
 
 
 (comment

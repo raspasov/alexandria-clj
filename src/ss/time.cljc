@@ -133,3 +133,17 @@
           t1
           t2
           (t/new-period 1 :days))))))
+
+
+(comment
+ ;EXAMPLES
+
+ ;Range of timestamps
+ (let [now (t/now)
+       now' (t/truncate now :minutes)]
+  (t/range
+   (t/beginning now')
+   (t/end (t/instant (t/at (t/tomorrow) (t/midnight))))
+   (t/new-duration 1 :minutes)))
+
+ )

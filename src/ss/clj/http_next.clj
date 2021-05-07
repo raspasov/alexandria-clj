@@ -72,8 +72,9 @@
       (update-in [:headers] (fn [headers] (assoc headers "content-type" "application/transit+json")))))
 
 (defn transit-request-f [req]
+  (timbre/spy req)
   (-> req
-      (update-in [:body] bs/to-string)
+      (update-in [:body] (fnil bs/to-string "{}"))
       (update-in [:body] #(tt-clj/transit-to-data %))))
 
 (defn bs->string [bs]

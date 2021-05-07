@@ -2,7 +2,8 @@
  (:require [react-native-animatable :as -rna]
            [ss.react.core :as rc]
            [cljs-bean.core :as b]
-           [ss.react-native.dimensions :as dm]))
+           [ss.react-native.dimensions :as dm]
+           [ss.react-native.core :as r]))
 
 (def ^js/Object rna -rna)
 
@@ -11,6 +12,12 @@
 
 
 (def text (partial rc/create-element-js (.-Text rna)))
+
+
+(def touchable-opacity
+ (partial rc/create-element-js
+  ((.-createAnimatableComponent rna)
+   (.-TouchableOpacity r/ReactNative))))
 
 
 (def animatable-registry

@@ -51,15 +51,16 @@
        args-vector-idx# (first (ss.c/positions vector? ret#))
        ;the args themselves
        args-vector#     (nth ret# args-vector-idx#)
+       args-vector'#    (update args-vector# 0 (fn [arg] (if (map? arg) (gensym) arg)))
        ;split (defn ...) into parts
        ;each part-N is a sequence so we can concat them back up at the end
        part-1-defn#     (take args-vector-idx# ret#)
-       part-2-args#     (vector args-vector#)
+       part-2-args#     (vector args-vector'#)
        part-3-body#     (drop (inc args-vector-idx#) ret#)
        ;MAIN PART: modify part 3 by "shadowing" the first argument
        part-3-body'#    (vector
                          `(let [~(first args-vector#)
-                                (ss.react.core/props ~(first args-vector#))]
+                                (ss.react.core/props ~(first args-vector'#))]
                            ~@part-3-body#))]
   ;concat all parts and return
   (concat

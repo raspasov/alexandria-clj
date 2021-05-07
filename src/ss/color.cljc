@@ -19,6 +19,11 @@
 
 
 
+(defn -yellow!
+ ([] (-yellow! 1))
+ ([opacity]
+  (str "rgba(253,219,41," opacity ")")))
+(def yellow! (memoize -yellow!))
 
 
 (defn -white
@@ -115,7 +120,7 @@
  ([opacity]
   (str "rgba(252,252,252," opacity ")")))
 
-(defn get-shadow
+(defn shadow
  [{:keys [color opacity offset radius] :or {color (bl) opacity 0.7 offset {:height 0 :width 0} radius 8}}]
  {:shadowColor   color
   :shadowOpacity opacity
