@@ -1,4 +1,5 @@
 (ns ss.core
+ (:require [clojure.core.async :as a])
  #?(:cljs
     (:require-macros ss.core)))
 
@@ -128,4 +129,16 @@
     ~(if (empty? steps)
       name
       (last steps)))))
+
+
+(comment
+ (a/go
+  (some-as-> (a/<! (a/go {:a 42})) x
+   (a/go
+    (a/<! (a/timeout 3000))
+    x)
+   (println (a/<! x))))
+ )
+
+
 

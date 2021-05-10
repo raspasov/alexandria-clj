@@ -145,7 +145,7 @@
  (.removeEventListener AppState event-name f))
 
 
-(defn use-app-state
+(defn use-rn-app-state
  "Helper hook for app-state.
   Also sets up memory warning message to be printed."
  []

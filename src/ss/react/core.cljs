@@ -128,6 +128,12 @@
  (.-_cljs props))
 
 
+(defn children
+ "Get the component children"
+ [^js/Object props]
+ (.-children props))
+
+
 (defn ^js/Object use-mounted-obj
  "Returns a (mutable) mounted-obj which can used to check if the component is currently mounted."
  []

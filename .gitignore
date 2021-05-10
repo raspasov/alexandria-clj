@@ -68,3 +68,4 @@ web-build/
 target
 out/
 .nrepl-port
+scratch_local.cljc
