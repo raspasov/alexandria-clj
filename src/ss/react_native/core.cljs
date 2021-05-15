@@ -35,51 +35,22 @@
 
 (def view (partial rc/create-element-js (.-View ReactNative)))
 (def view|a (partial rc/create-element-js (createAnimatedComponent (.-View ReactNative))))
-
-
 (def safe-area-view (partial rc/create-element-js (.-SafeAreaView ReactNative)))
-
-
 (def button (partial rc/create-element-js (.-Button ReactNative)))
-
-
 (def text (partial rc/create-element-js (.-Text ReactNative)))
 (def text|a (partial rc/create-element-js (createAnimatedComponent (.-Text ReactNative))))
-
-
 (def image (partial rc/create-element-js (.-Image ReactNative)))
-
-
 (def touchable-opacity (partial rc/create-element-js (.-TouchableOpacity ReactNative)))
 (def touchable-opacity|a (partial rc/create-element-js (createAnimatedComponent (.-TouchableOpacity ReactNative))))
-
 (def pressable (partial rc/create-element-js (.-Pressable ReactNative)))
-
-
 (def modal (partial rc/create-element-js (.-Modal ReactNative)))
-
-
 (def activity-indicator (partial rc/create-element-js (.-ActivityIndicator ReactNative)))
-
-
 (def ^js/Object status-bar (.-StatusBar ReactNative))
-
-
 (def ^js/Object pixel-ratio (.-PixelRatio ReactNative))
-
-
 (def ^js/Object virtualized-list (partial rc/create-element-js (createAnimatedComponent (.-VirtualizedList ReactNative))))
-
-
 (def scroll-view (partial rc/create-element-js (.-ScrollView ReactNative)))
-
-
 (def keyboard-avoiding-view (partial rc/create-element-js (.-KeyboardAvoidingView ReactNative)))
-
-
 (def text-input (partial rc/create-element-js (.-TextInput ReactNative)))
-
-
 (def platform (.. ReactNative -Platform -OS))
 
 

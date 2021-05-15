@@ -22,6 +22,13 @@
        (t/in tz))))
 
 
+(defn time-map->zoned-date-time
+ "Helper for time represented with a map like:
+  {:time/timestamp 1620994460453, :time/tz \"America/Los_Angeles\"}"
+ [{:time/keys [timestamp tz]}]
+ (timestamp->zoned-date-time timestamp tz))
+
+
 (defn date-time->timestamp [dt]
   (-> dt
       (t/inst)
