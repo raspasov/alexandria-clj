@@ -53,6 +53,9 @@
 (def text-input (partial rc/create-element-js (.-TextInput ReactNative)))
 (def platform (.. ReactNative -Platform -OS))
 
+(def ^js/Object linking (.. ReactNative -Linking))
+(def open-url (.-openURL linking))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Keyboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (def ^js/Object Keyboard (.-Keyboard ReactNative))

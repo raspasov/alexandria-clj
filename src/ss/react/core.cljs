@@ -24,9 +24,6 @@
  (.-current ref))
 
 
-(declare use-effect)
-
-
 (def use-effect (.-useEffect React))
 
 

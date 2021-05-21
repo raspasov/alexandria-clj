@@ -23,6 +23,20 @@
     :cache cache))))
 
 
+(defn fetch-exists
+ "Returns a channel with true or false"
+ [url]
+ (a/go
+  (let [[^js/Object exists-ret ?error-on-resp]
+        (a/<!
+         (fetch url
+          (-> {}
+           (assoc :method "HEAD"))))
+        _  (when ?error-on-resp (timbre/warn ?error-on-resp))
+        ok (.-ok exists-ret)]
+   ok)))
+
+
 (defn fetch-transit
  "fetch, then convert response to transit"
  ([url]

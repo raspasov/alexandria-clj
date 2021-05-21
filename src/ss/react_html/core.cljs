@@ -7,3 +7,5 @@
 (def div (partial rc/create-element-js "div"))
 
 (def img (partial rc/create-element-js "img"))
+
+(def iframe (partial rc/create-element-js "iframe"))

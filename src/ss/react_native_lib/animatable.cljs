@@ -20,6 +20,12 @@
    (.-TouchableOpacity r/ReactNative))))
 
 
+(def safe-area-view
+ (partial rc/create-element-js
+  ((.-createAnimatableComponent rna)
+   (.-SafeAreaView r/ReactNative))))
+
+
 (def animatable-registry
  (.initializeRegistryWithDefinitions
   rna
