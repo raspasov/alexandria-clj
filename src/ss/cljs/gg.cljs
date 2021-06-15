@@ -1,4 +1,4 @@
-(ns ss.cljs.googc
+(ns ss.cljs.gg
   (:require [goog.object :as gobj]))
 
 

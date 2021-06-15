@@ -54,7 +54,7 @@
   :boBRRad :borderBottomRightRadius
   :boBLRad :borderBottomLeftRadius
   :boW     :borderWidth
-  :boC     :borderColor
+  :boClr   :borderColor
   :boTW    :borderTopWidth
   :boBW    :borderBottomWidth
   :boLW    :borderLeftWidth
@@ -149,7 +149,7 @@
 
 (defn shorten
  "Shorten a full regular style.
-  Must be passed in quoted like '{:width width :height height}"
+  regular-style must be quoted like '{:width width :height height}"
  [regular-style]
  (let [shorthands-invert (clojure.set/map-invert shorthands)
        ret               (into

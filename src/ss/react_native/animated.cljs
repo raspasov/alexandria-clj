@@ -1,6 +1,7 @@
 (ns ss.react-native.animated
   (:require [ss.react-native.core :as rn]
-            [ss.react.state-fns :as ax|state-fns]))
+            [ss.react.state-fns :as ss.stf]
+            [cljs-bean.core :as b]))
 
 
 (def animated (.-Animated rn/ReactNative))
@@ -9,10 +10,13 @@
 
 (def event (.-Animated.event rn/ReactNative))
 
+(defn event-native-driver [x]
+  (event x (b/->js {:useNativeDriver true})))
+
 (defn timing [an-animated-value m]
   (let [f (.-Animated.timing rn/ReactNative)]
     (when an-animated-value
-      (f an-animated-value (clj->js (assoc m :useNativeDriver true))))))
+      (f an-animated-value (b/->js (assoc m :useNativeDriver true))))))
 
 (defn start
   ([^js/Object x]
@@ -27,7 +31,7 @@
    (let [c (.-Animated.Value rn/ReactNative)
          anim-value (c. x)]
      (when k-or-ks
-       (ax|state-fns/set-mutable! k-or-ks anim-value))
+       (ss.stf/set-mutable! k-or-ks anim-value))
      ;move to native
      (start
        (timing anim-value {:toValue x :duration 1}))
@@ -35,7 +39,7 @@
 
 
 (defn value [k-or-ks]
-  (ax|state-fns/get-mutable k-or-ks))
+  (ss.stf/get-mutable k-or-ks))
 
 (defn math* [^js/Object anim-value-x ^js/Object anim-value-y]
   (let [f (.-Animated.multiply rn/ReactNative)]
@@ -58,7 +62,7 @@
    (if (instance? js/Object anim-value)
      (.interpolate
        anim-value
-       (clj->js {:inputRange input-range :outputRange output-range :extrapolate extrapolate}))
+       (b/->js {:inputRange input-range :outputRange output-range :extrapolate extrapolate}))
      (do
        #_(timbre/warn (ex-info "anim-value is not an Animated value" {:arguments [anim-value input-range output-range]}))
        default-value))))

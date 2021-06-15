@@ -1,13 +1,11 @@
 (ns ss.react.core
  (:require
-  [ss.react.state :as state]
   [cljs-bean.core :as b]
   [create-react-class]
-  [goog.object :as obj]
   [react]
-  [taoensso.timbre :as timbre]
-  [ss.react.state-fns :as ax|state-fns]
-  [ss.cljs.googc :as ax|goog])
+  [ss.cljs.gg]                          ;DO NOT REMOVE
+  [ss.react.state-fns :as ss.stf]
+  [taoensso.timbre :as timbre])
  (:require-macros [ss.react.core]))
 
 
@@ -56,11 +54,11 @@
        _ (use-effect-once
           (fn []
            (timbre/info "add: auto-refresh-hook")
-           (ax|state-fns/update-mutable! :auto-refresh-hooks
+           (ss.stf/update-mutable! :auto-refresh-hooks
             (fn [?set] ((fnil conj #{}) ?set refresh-hook)))
 
            (fn cleanup []
-            (ax|state-fns/update-mutable! :auto-refresh-hooks
+            (ss.stf/update-mutable! :auto-refresh-hooks
              (fn [?set] ((fnil disj #{}) ?set refresh-hook)))
             (timbre/info "cleanup: auto-refresh-hook"))))]
   ?uuid))
@@ -71,7 +69,7 @@
   (fn [f]
    (f nil)
    (f (random-uuid)))
-  (ax|state-fns/get-mutable :auto-refresh-hooks)))
+  (ss.stf/get-mutable :auto-refresh-hooks)))
 
 
 (def memo (.-memo React))
@@ -151,18 +149,17 @@
  "'Convert' a prop value to a local state value. To be used for performance reasons
   to avoid re-rendering from the root."
  [path-or-value default]
- (let [[x hook-f] (use-state default)
+ (let [[x set-x] (use-state default)
        mounted-obj (use-mounted-obj)]
   (if (vector? path-or-value)
    (do
-    (ax|state-fns/set-mutable!
+    (ss.stf/set-mutable!
      path-or-value
      (fn [f]
       (let [new-x (f x)]
        (if (mounted? mounted-obj)
-        (hook-f new-x)
-        (do
-         (timbre/warn "Component not mounted" path-or-value new-x)))
+        (set-x new-x)
+        (timbre/warn "Component not mounted" path-or-value new-x))
        ;return the new value
        new-x)))
     ;return

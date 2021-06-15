@@ -26,7 +26,7 @@
 
 (defmacro display-name [component]
   (let [fully-qualified-name# (str *ns* "/" component)]
-    `(ss.cljs.googc/assoc-obj! ~component "displayName" ~fully-qualified-name#)))
+   `(ss.cljs.gg/assoc-obj! ~component "displayName" ~fully-qualified-name#)))
 
 
 ;usage

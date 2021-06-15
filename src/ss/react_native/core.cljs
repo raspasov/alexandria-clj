@@ -10,6 +10,10 @@
 
 (def createAnimatedComponent (.. ReactNative -Animated -createAnimatedComponent))
 
+(def requireNativeComponent (.. ReactNative -requireNativeComponent))
+
+(def nativeModules (.. ReactNative -NativeModules))
+
 (def ^js/Object AppRegistry (.-AppRegistry ReactNative))
 
 (def runAfterInteractions (.. ReactNative -InteractionManager -runAfterInteractions))

@@ -9,7 +9,7 @@
   `(partial
     ss.react.core/create-element-cljs
     (ss.react.core/memo
-     (ss.cljs.googc/assoc-obj! ~component "displayName" ~fully-qualified-name#)))))
+     (ss.cljs.gg/assoc-obj! ~component "displayName" ~fully-qualified-name#)))))
 
 
 (defmacro with-keys

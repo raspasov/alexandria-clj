@@ -1,10 +1,9 @@
 (ns ss.react-native.virtualized-list
   (:require [ss.react.core :as rc]
-            [ss.react.macros :as macro]
             [ss.react-native.core :as r]
             [ss.react-native.dimensions :as dm]
             [ss.react.state-fns :as state-fns]
-            [ss.cljs.googc :as ax|goog]
+            [ss.cljs.gg]
             [cljs-bean.core :as b]
             [taoensso.timbre :as timbre]))
 
@@ -15,7 +14,7 @@
                 onMomentumScrollEnd (fn [e]) onMomentumScrollBegin (fn [e])}
          :as   props} (rc/props props)
         props-no-data (dissoc props :data)]
-    (r/virtualized-list
+   (r/virtualized-list
       (-> {:getItem               (fn [data idx]
                                     ;return tuple [item-data idx] - idx needed for keyExtractor
                                     ;item-data is Clojure data (usually a map)
@@ -43,7 +42,7 @@
           ;convert to JS
           (b/->js)
           ;add back immutable data to the JS object
-          (ax|goog/assoc-obj! "data" data)))))
+          (ss.cljs.gg/assoc-obj! "data" data)))))
 (def immutable-list (rc/e immutable-list-component))
 
 
