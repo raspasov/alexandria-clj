@@ -1,7 +1,7 @@
 (ns ss.cljs.reanimated
   (:refer-clojure :exclude [cond and max min concat divide = not= not < <= + - * / or set])
   (:require [react-native-reanimated :as -rnr]
-            [ss.react.core :as r]))
+            [ss.react.core :as rc]))
 
 (def ^js/Object rnr -rnr)
 
@@ -58,5 +58,5 @@
 (def spring (.-spring rnr))
 
 
-(def view (partial r/create-element-js (.-View rnr)))
-(def code-view (partial r/create-element-js (.-Code rnr)))
+(def view (partial rc/create-element-js (.-View rnr)))
+(def code-view (partial rc/create-element-js (.-Code rnr)))

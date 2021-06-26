@@ -166,3 +166,20 @@
     x)
    ;else, return
    path-or-value)))
+
+
+(defn swap-hook! [k f]
+ (let [path    [:hooks k]
+       ?hook-f (ss.stf/get-mutable [:hooks k])]
+  (if (fn? ?hook-f)
+   (?hook-f f)
+   (timbre/warn "No hook found at path" path))))
+
+
+(defn hook-state
+ "WARNING: If you call this function right after a swap-hook!, it might erase the update."
+ []
+ (into
+  {}
+  (map (fn [[k f]] [k (f identity)]))
+  (ss.stf/get-mutable [:hooks])))

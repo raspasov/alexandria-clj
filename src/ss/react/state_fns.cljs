@@ -49,13 +49,6 @@
   true)
 
 
-(defn swap-hook! [k f]
-  (let [path    [:hooks k]
-        ?hook-f (get-mutable [:hooks k])]
-    (if (fn? ?hook-f)
-      (?hook-f f)
-      (timbre/warn "No hook found at path" path))))
-
 
 (defn hook-state []
   (into
