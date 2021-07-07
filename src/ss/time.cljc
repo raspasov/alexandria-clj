@@ -37,36 +37,38 @@
 
 (defn countdown-generic
   "Gives a map of the countdown with units of time as keys."
-  [end-time]
+ ([end-instant]
+  (countdown-generic (t/instant) end-instant false))
+ ([start-instant end-instant always-show?]
   (let [duration (t/duration
-                   {:tick/beginning (t/instant)
-                    :tick/end       end-time})
+                  {:tick/beginning start-instant
+                   :tick/end       end-instant})
         weeks    (long (t/divide duration (t/new-duration 7 :days)))
         days     (t/days (t/- duration
-                              (t/new-duration (* weeks 7) :days)))
+                          (t/new-duration (* weeks 7) :days)))
         hours    (t/hours (t/- duration
-                               (t/new-duration (+ days (* weeks 7)) :days)))
+                           (t/new-duration (+ days (* weeks 7)) :days)))
         minutes  (t/minutes (t/- duration
-                                 (t/new-duration (+ days (* weeks 7)) :days)
-                                 (t/new-duration hours :hours)))
+                             (t/new-duration (+ days (* weeks 7)) :days)
+                             (t/new-duration hours :hours)))
         seconds  (t/seconds (t/- duration
-                                 (t/new-duration (+ days (* weeks 7)) :days)
-                                 (t/new-duration hours :hours)
-                                 (t/new-duration minutes :minutes)))
+                             (t/new-duration (+ days (* weeks 7)) :days)
+                             (t/new-duration hours :hours)
+                             (t/new-duration minutes :minutes)))
         millis   (t/millis (t/- duration
-                                (t/new-duration (+ days (* weeks 7)) :days)
-                                (t/new-duration hours :hours)
-                                (t/new-duration minutes :minutes)
-                                (t/new-duration seconds :seconds)))]
-    (if (t/< (t/instant) end-time)
-      {:counting?     true
-       :weeks        weeks
-       :days         days
-       :hours        hours
-       :minutes      minutes
-       :seconds      seconds
-       :milliseconds millis}
-      {:counting? false})))
+                            (t/new-duration (+ days (* weeks 7)) :days)
+                            (t/new-duration hours :hours)
+                            (t/new-duration minutes :minutes)
+                            (t/new-duration seconds :seconds)))]
+   (if (or always-show? (t/< (t/instant) end-instant))
+    {:counting?    true
+     :weeks        weeks
+     :days         days
+     :hours        hours
+     :minutes      minutes
+     :seconds      seconds
+     :milliseconds millis}
+    {:counting? false}))))
 
 
 (defn today-at-midnight-in-tz

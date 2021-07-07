@@ -19,6 +19,7 @@
 (defn ww [] (:width (get-window)))
 (defn ww-half [] (/ (ww) 2))
 (defn hh [] (:height (get-window)))
+(defn hh-half [] (/ (hh) 2))
 
 (defn get-device-relative-scale []
  (/ (.-width (get-window-obj)) 375))

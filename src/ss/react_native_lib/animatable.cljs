@@ -35,4 +35,10 @@
                      :to              {:height 0} :duration 200}
     :bounceBounce   {0   {:scale 1}
                      0.3 {:scale 0.95}
-                     1   {:scale 1}}})))
+                     1   {:scale 1}}
+    :pulsePulse     {0   {:scale   1
+                          :opacity 1}
+                     0.5 {:scale   1.3
+                          :opacity 0.5}
+                     1   {:scale   1
+                          :opacity 1}}})))
