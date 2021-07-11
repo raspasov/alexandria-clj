@@ -12,6 +12,9 @@
 (def ^js/Object React react)
 
 
+(def children-count (.. React -Children -count))
+
+
 (def use-state (.-useState React))
 
 
@@ -124,7 +127,8 @@
 
 
 (defn children
- "Get the component children"
+ "IMPORTANT! Needs to be called on the 'original' React props, not CLJS props.
+  Get the component children"
  [^js/Object props]
  (.-children props))
 

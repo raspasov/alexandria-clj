@@ -40,6 +40,12 @@
   (str "rgba(0,0,0," opacity ")")))
 (def bl (memoize -black))
 
+(defn -black2
+ ([] (-black2 1))
+ ([opacity]
+  (str "rgba(18,18,18," opacity ")")))
+(def bl2 (memoize -black2))
+
 (defn green
  ([] (green 1))
  ([opacity]
