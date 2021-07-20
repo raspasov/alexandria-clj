@@ -45,29 +45,16 @@
 
 
 (rc/defnrc -camera-view [{:keys [cameraType] :as props}]
- (let [^js/Object ready-ch (rc/use-ref (atom (a/promise-chan)))
-       [camera-state set-camera-state] (rc/use-state nil)
-       _                   (rc/use-effect-once
-                            (fn []
-                             #_(a/go
-                              (timbre/info "CAMERA waiting for camera ready")
-                              (a/<! @(rc/current ready-ch))
-                              (reset! (rc/current ready-ch) (a/promise-chan))
-                              (timbre/info "CAMERA start-camera")
-
-                              (start-camera
-                               "front"
-                               (fn [on-stop-ret]
-                                (timbre/spy on-stop-ret))) )
-                             (fn cleanup []
-                              ;(stop-camera)
-                              (timbre/info "ss-camera cleanup"))))]
-  (timbre/info "RENDER ss-camera" camera-state)
-  (ss-camera
-   (-> props
-    (assoc
-     :onLayout (fn [_] (a/put! @(rc/current ready-ch) true)))))))
+ (let [_ (rc/use-effect-once
+          (fn []
+           (timbre/info "ss-camera init")
+           (fn cleanup []
+            ;(stop-camera)
+            (timbre/info "ss-camera cleanup"))))]
+  (timbre/info "RENDER ss-camera")
+  (ss-camera props)))
 (def camera-view (rc/e -camera-view))
+
 
 
 

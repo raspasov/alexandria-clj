@@ -55,7 +55,12 @@
 (def scroll-view (partial rc/create-element-js (.-ScrollView ReactNative)))
 (def keyboard-avoiding-view (partial rc/create-element-js (.-KeyboardAvoidingView ReactNative)))
 (def text-input (partial rc/create-element-js (.-TextInput ReactNative)))
+(def pan-responder (.-PanResponder ReactNative))
 (def platform (.. ReactNative -Platform -OS))
+
+
+(defn pan-responder-create [config]
+ ((.-create pan-responder) (clj->js config)))
 
 (def ^js/Object linking (.. ReactNative -Linking))
 (def open-url (.-openURL linking))

@@ -7,6 +7,7 @@
 
 
 
+
 ;Specter-like
 (defn find-in-data []
  (let [x     {:au {:b [{:n 1 :k "q"} {:n 1 :k "w"} {:n 1 :k "e"}]}}
@@ -15,7 +16,7 @@
        idx   (first
               (ss.c/positions
                ;pred
-               (fn [m] (= "w" (:k m)))
+               #(= "w" (:k %))
                (get-in x path)))
        ;final path
        path' (conj path idx)]
@@ -37,3 +38,4 @@
   (sequence
    (map vector)
    v1 v2)))
+

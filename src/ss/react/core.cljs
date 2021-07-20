@@ -3,7 +3,7 @@
   [cljs-bean.core :as b]
   [create-react-class]
   [react]
-  [ss.cljs.gg]                          ;DO NOT REMOVE
+  [ss.cljs.gg]                            ;DO NOT REMOVE
   [ss.react.state-fns :as ss.stf]
   [taoensso.timbre :as timbre])
  (:require-macros [ss.react.core]))
@@ -87,7 +87,7 @@
  (if-let [k (get x :key)]
   #js{:_cljs x :key k}
   #js{:_cljs x}))
-(def cljs-props (memoize -cljs-props))
+(def cljs-props -cljs-props)
 
 
 (defn create-element-js
@@ -112,6 +112,14 @@
   component
   (cljs-props props)
   children))
+
+
+(defn are-equal? [prev-props next-props]
+ (let [equal?
+       (=
+        (ss.cljs.gg/get-obj prev-props :_cljs)
+        (ss.cljs.gg/get-obj next-props :_cljs))]
+  equal?))
 
 
 (defn props-class
