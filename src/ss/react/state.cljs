@@ -21,7 +21,7 @@
 
 (defn watch-refresh-hook [watch-key -atom old-state new-state]
  (if (= old-state new-state)
-  (timbre/spy (= old-state new-state))
+  true
   (when-let [refresh-root-hook @*root-refresh-hook]
    (refresh-root-hook (random-uuid)))))
 
@@ -56,6 +56,7 @@
         ret              (reset! *-conn *datascript-conn)]
    (set-datascript-ready)
    ret)))
+
 
 
 ;Mutable state atom and fns

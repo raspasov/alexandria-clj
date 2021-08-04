@@ -64,6 +64,8 @@
   :xf      :transform
   :minW    :minWidth
   :minH    :minHeight
+  :maxW    :maxWidth
+  :maxH    :maxHeight
   :op      :opacity
   :ovfl    :overflow
   :vis     "visible"

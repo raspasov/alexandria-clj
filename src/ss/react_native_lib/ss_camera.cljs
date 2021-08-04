@@ -31,8 +31,10 @@
  (timbre/info "stop-camera in native")
  (.stopCamera SSCameraManager "stop-camera from js"))
 
-(defn start-recording []
- (.startRecording SSCameraManager))
+(defn start-recording [an-uuid]
+ (timbre/info "start-recording" an-uuid)
+
+ (.startRecording SSCameraManager (str an-uuid)))
 
 (defn stop-recording []
  (.stopRecording SSCameraManager))
@@ -44,13 +46,31 @@
  (.stopPoseTracking SSCameraManager))
 
 
+(defn merge-videos [video-specs]
+ (timbre/spy video-specs)
+ (.mergeVideos SSCameraManager (b/->js video-specs)))
+
+
+(comment
+ (merge-videos
+  (into []
+   (comp
+    (map (fn [-uuid] {:uuid (str -uuid) :start 10 :duration 5})))
+
+   (ar.datascript/workout-set-uuids (ar.datascript/db) 988)
+   #_(mapv :exercise-set/uuid
+    (mapv ar.datascript/exercise-set
+     (take 2 (ar.datascript/all-exercise-sets-eids (ar.datascript/db))))))))
+
+
 (rc/defnrc -camera-view [{:keys [cameraType] :as props}]
  (let [_ (rc/use-effect-once
           (fn []
            (timbre/info "ss-camera init")
            (fn cleanup []
+            (stop-camera)
             ;(stop-camera)
-            (timbre/info "ss-camera cleanup"))))]
+            (timbre/info "ss-camera cleanup."))))]
   (timbre/info "RENDER ss-camera")
   (ss-camera props)))
 (def camera-view (rc/e -camera-view))

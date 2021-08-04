@@ -8,6 +8,11 @@
 
 (def ^js/Object ReactNative react-native)
 
+(defn use-window-dimensions []
+ (let [f (.. ReactNative -useWindowDimensions)
+       window (f)]
+  (b/->clj window)))
+
 (def createAnimatedComponent (.. ReactNative -Animated -createAnimatedComponent))
 
 (def requireNativeComponent (.. ReactNative -requireNativeComponent))

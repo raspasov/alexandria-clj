@@ -106,3 +106,28 @@
  (.estimateSinglePose model tensor (b/->js {:flipHorizontal false})))
 
 
+;Usage
+(comment
+ (defn go-loop-camera-images [model ^js/Object images-iter]
+  (ss.a/go-loop ^{:id :go-loop-camera-images}
+   [i 0]
+   (let [wait-ch (a/chan 1)]
+    (js/requestAnimationFrame
+     (fn []
+      (tf/tidy
+       (fn []
+        (let [image-tensor (-> images-iter .next .-value)]
+         (if (and
+              (not (nil? image-tensor))
+              (zero? (mod-images i))
+              (true? (stf/counter-enabled?)))
+          ;process
+          (let [est-pose-ch (posenet/estimate-single-pose model image-tensor)]
+           ;forward to channel
+           (a/put! stf/estimated-pose-ch [est-pose-ch wait-ch]))
+          ;skip
+          (do
+           ;tell wait-ch to continue
+           (a/put! wait-ch true))))))))
+    (a/<! wait-ch)
+    (recur (inc i))))))

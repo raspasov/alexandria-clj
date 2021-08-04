@@ -114,9 +114,8 @@
 
   ;Example
   (some-as-> {:a 42} x
-   ;nil!
-   (:not-there x)
-   (inc x))
+   (:b x) ;this is nil
+   (inc x)) ;this does not run
   ;=> nil
 
   "
