@@ -42,7 +42,7 @@
 
   ;to
  (defn my-component [props]
-  (let [props (rc/props props)]
+  (let [props (ss.react.core/props props)]
    ...))
 
  "
@@ -52,6 +52,7 @@
        args-vector-idx# (first (ss.c/positions vector? ret#))
        ;the args themselves
        args-vector#     (nth ret# args-vector-idx#)
+       ;if props is destructured (via a map), replace with (gensym)
        args-vector'#    (update args-vector# 0 (fn [arg] (if (map? arg) (gensym) arg)))
        ;split (defn ...) into parts
        ;each part-N is a sequence so we can concat them back up at the end
