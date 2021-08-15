@@ -28,13 +28,12 @@
  ([update-interval-ms set-device-motion-f]
   (let [[device-motion set-device-motion] (rc/use-state nil)
         set-device-motion' (comp set-device-motion set-device-motion-f)
-        _ (rc/use-effect-once
-           (fn []
-            (.setUpdateInterval DeviceMotion update-interval-ms)
-            (timbre/info "use-device-motion init")
-            (let [^js subscription (.addListener DeviceMotion (listener set-device-motion'))]
-             (.setUpdateInterval DeviceMotion update-interval-ms)
-             (fn cleanup []
-              (timbre/info "use-device-motion cleanup")
-              (.remove subscription)))))]
+        _                  (.setUpdateInterval DeviceMotion update-interval-ms)
+        _                  (rc/use-effect-once
+                            (fn []
+                             (timbre/info "use-device-motion init")
+                             (let [^js subscription (.addListener DeviceMotion (listener set-device-motion'))]
+                              (fn cleanup []
+                               (timbre/info "use-device-motion cleanup")
+                               (.remove subscription)))))]
    device-motion)))
