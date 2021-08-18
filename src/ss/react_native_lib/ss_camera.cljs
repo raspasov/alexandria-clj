@@ -27,6 +27,10 @@
     :landscape-left})
  (.setOrientation SSCameraManager (name k)))
 
+
+(defn set-orientation-transform [degrees]
+ (.setOrientationTransform SSCameraManager degrees))
+
 (defn start-camera [front-or-back on-stop]
  (timbre/info "start-camera in native:::" front-or-back)
  (.startCamera SSCameraManager front-or-back on-stop))
@@ -69,8 +73,8 @@
 
    (ar.datascript/workout-set-uuids (ar.datascript/db) 988)
    #_(mapv :exercise-set/uuid
-    (mapv ar.datascript/exercise-set
-     (take 2 (ar.datascript/all-exercise-sets-eids (ar.datascript/db))))))))
+      (mapv ar.datascript/exercise-set
+       (take 2 (ar.datascript/all-exercise-sets-eids (ar.datascript/db))))))))
 
 
 (rc/defnrc -camera-view [{:keys [cameraType] :as props}]
@@ -78,10 +82,10 @@
           (fn []
            (timbre/info "ss-camera init")
            (fn cleanup []
-            (stop-camera)
+            ;(stop-camera)
             ;(stop-camera)
             (timbre/info "ss-camera cleanup."))))]
-  (timbre/info "RENDER ss-camera")
+  (timbre/info "RENDER ss-camera" cameraType)
   (ss-camera props)))
 (def camera-view (rc/e -camera-view))
 

@@ -18,7 +18,7 @@
 
 (defn listener [set-device-motion]
  (fn [^js o]
-  (timbre/info "setting device-motion...")
+  ;(timbre/info "setting device-motion...")
   (set-device-motion (b/->clj o))))
 
 

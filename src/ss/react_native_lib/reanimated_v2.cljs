@@ -6,6 +6,7 @@
 
 (def ^js/Object reanimated -reanimated)
 (def withSpring (.-withSpring reanimated))
+(def cancelAnimation (.-cancelAnimation reanimated))
 
 (def ^js/Object box -box)
 (def view (partial rc/create-element-js (.-Box box)))
