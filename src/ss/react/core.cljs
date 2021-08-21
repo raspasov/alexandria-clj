@@ -142,7 +142,7 @@
 
 
 (defn ^js/Object use-mounted-obj
- "Returns a (mutable) mounted-obj which can used to check if the component is currently mounted."
+ "Returns a (mutable) mounted-obj which can be used to check if the component is currently mounted."
  []
  (let [^js/Object mounted-obj (use-ref false)]
   (use-effect-once
