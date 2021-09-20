@@ -42,6 +42,8 @@
    (.flush mxp-obj))))
 
 (defn track
+ ([event-name data]
+  (track event-name data false))
  ([event-name data flush?]
   (a/go
    (a/<! mixpanel-ready-ch)
@@ -50,6 +52,9 @@
     (.track mxp-obj (name event-name) (b/->js data))
     (when flush?
      (.flush mxp-obj))))))
+
+(defn on-press [event-name data]
+ )
 
 
 

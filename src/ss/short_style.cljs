@@ -5,6 +5,7 @@
 
 (def shorthands
  {:f       :flex
+  :fG      :flexGrow
   :D       :flexDirection
   :||      "column"
   :--      "row"

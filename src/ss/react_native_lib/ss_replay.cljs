@@ -13,8 +13,8 @@
 (defn start-recording []
  (.startRecording SSReplayManager))
 
-(defn stop-recording []
- (.stopRecording SSReplayManager))
+(defn stop-recording [an-uuid]
+ (.stopRecording SSReplayManager an-uuid))
 
 
 

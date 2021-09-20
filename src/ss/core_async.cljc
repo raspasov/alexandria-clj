@@ -78,6 +78,61 @@
   trigger-control))
 
 
+(defn create-evidence-trigger
+ "Creates an evidence trigger that runs if and only if the 'pred' function is satisfied within 'timeout-ms'.
+  'pred' takes init-state/evidence-state."
+ [pred init-state timeout-ms f-success]
+ (let [control-ch (a/chan (a/dropping-buffer 1))]
+  (a/go
+   (loop [timeout-ch     (a/timeout timeout-ms)
+          evidence-state init-state]
+    (if (pred evidence-state)
+     (do
+      ;enough evidence collected, success!
+      (timbre/spy "success...")
+      (f-success)
+      (recur (a/timeout timeout-ms) init-state))
+
+     (let [[[?control-k ?evidence-f :as value] _] (a/alts! [timeout-ch control-ch])]
+      (cond
+       (nil? value)
+       ;not enough evidence within timeout-ms, end trigger
+       (do
+        ;(timbre/info "Not enough evidence within timeout-ms, reset state")
+        ;(timbre/spy "nil... reset state")
+        ;(timbre/spy value)
+        (recur (a/timeout timeout-ms) init-state))
+       ;stop the trigger
+       (= ?control-k :stop)
+       (do
+        (timbre/info "stop...")
+        (timbre/spy value)
+        (a/close! control-ch)
+        nil)
+       ;got evidence, update the evidence state and recur
+       (and (= ?control-k :evidence) (fn? ?evidence-f))
+       (do
+        (timbre/info "evidence...")
+        (timbre/spy value)
+        (recur timeout-ch (?evidence-f evidence-state)))
+       ;else, stop in all other cases
+       :else
+       (do
+        (timbre/info "else...")
+        (timbre/spy value)
+        (a/close! control-ch)
+        nil))))))
+  ;return
+  control-ch))
+
+(comment
+ (def evidence-ch
+  (create-evidence-trigger
+   (fn [x] (<= 2 x))
+   0
+   10000
+   (fn [] (timbre/info "Evidence Success")))))
+
 
 (defmacro go-try
  "Asynchronously executes the body in a go block. Returns a channel which

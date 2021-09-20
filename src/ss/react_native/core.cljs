@@ -9,7 +9,7 @@
 (def ^js/Object ReactNative react-native)
 
 (defn use-window-dimensions []
- (let [f (.. ReactNative -useWindowDimensions)
+ (let [f      (.. ReactNative -useWindowDimensions)
        window (f)]
   (b/->clj window)))
 
@@ -103,20 +103,29 @@
   Returns nil until keyboard is shown for the first time.
   Return values #{:kb/shown :kb/hidden nil}"
  []
- (let [[kb-status set-kb-status :as ret] (rc/use-state nil)
-       kb-show (fn [] (set-kb-status :kb/shown))
-       kb-hide (fn [] (set-kb-status :kb/hidden))
-       _       (rc/use-effect-once
-                (fn []
-                 (timbre/info "use-keyboard init")
-                 (keyboard-add-listener "keyboardWillShow" kb-show)
-                 (keyboard-add-listener "keyboardDidShow" kb-show)
-                 (keyboard-add-listener "keyboardDidHide" kb-hide)
-                 (fn cleanup []
-                  (timbre/info "use-keyboard cleanup")
-                  (keyboard-remove-listener "keyboardWillShow" kb-show)
-                  (keyboard-remove-listener "keyboardDidShow" kb-show)
-                  (keyboard-remove-listener "keyboardDidHide" kb-hide))))]
+ (let [[kbd-m set-kbd-m! :as ret] (rc/use-state nil)
+       kb-will-show (fn [_]
+                     (set-kbd-m! {:kb/status :kb/will-show}))
+       kb-did-show  (fn [e]
+                     (let [{{:keys [height]} :endCoordinates :as keyboard-e} (b/->clj e)]
+                      (timbre/spy keyboard-e)
+                      (set-kbd-m! {:kb/status :kb/will-show :kb/height height})))
+       kb-will-hide (fn [_]
+                     (set-kbd-m! {:kb/status :kb/will-hide}))
+       kb-hide      (fn [_] (set-kbd-m! {:kb/status :kb/hidden}))
+       _            (rc/use-effect-once
+                     (fn []
+                      (timbre/info "use-keyboard init")
+                      (keyboard-add-listener "keyboardWillShow" kb-will-show)
+                      (keyboard-add-listener "keyboardDidShow" kb-did-show)
+                      (keyboard-add-listener "keyboardWillHide" kb-will-hide)
+                      (keyboard-add-listener "keyboardDidHide" kb-hide)
+                      (fn cleanup []
+                       (timbre/info "use-keyboard cleanup")
+                       (keyboard-remove-listener "keyboardWillShow" kb-will-show)
+                       (keyboard-remove-listener "keyboardDidShow" kb-did-show)
+                       (keyboard-remove-listener "keyboardWillHide" kb-will-hide)
+                       (keyboard-remove-listener "keyboardDidHide" kb-hide))))]
   ret))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Keyboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

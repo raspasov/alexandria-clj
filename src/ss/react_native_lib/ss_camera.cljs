@@ -51,7 +51,11 @@
  (.startRecording SSCameraManager (str an-uuid)))
 
 (defn stop-recording []
- (.stopRecording SSCameraManager))
+ (a/go
+  (let [stop-rec-result (a/<! (.stopRecording SSCameraManager ""))]
+   (timbre/spy stop-rec-result)
+   #_(timbre/spy stop-recording-ret?)
+   #_(timbre/spy err?))))
 
 (defn start-pose-tracking []
  (.startPoseTracking SSCameraManager))
@@ -59,10 +63,20 @@
 (defn stop-pose-tracking []
  (.stopPoseTracking SSCameraManager))
 
+(defn start-hand-tracking []
+ (.startHandTracking SSCameraManager))
+
+(defn stop-hand-tracking []
+ (.stopHandTracking SSCameraManager))
+
 
 (defn merge-videos [video-specs]
  (timbre/spy video-specs)
  (.mergeVideos SSCameraManager (b/->js video-specs)))
+
+
+(defn enhance-video [an-uuid exercise-name]
+ (.enhanceVideo SSCameraManager an-uuid exercise-name))
 
 
 (comment
@@ -91,7 +105,14 @@
 
 
 
+(comment
+ (a/go
+  (let [an-uuid "58af2187-5f14-4e0e-8b85-6fd46e8c0d36"]
+   (a/<! (ss.expo.file-system/delete-async (str an-uuid "-enhanced.mov")))
+   (enhance-video an-uuid "Muscle Up"))))
 
+(comment
+ (ss.react-native-lib.ss-camera/enhance-video "bdc3829d-1f75-4db9-b875-9be528e50af0" "Exercise!"))
 
 ;ObjC, listeners
 ;-----------------------------------------------------------------
