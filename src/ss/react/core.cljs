@@ -28,6 +28,9 @@
 (def use-effect (.-useEffect React))
 
 
+(def use-callback (.-useCallback React))
+
+
 (defn use-effect-once
  "useEffect with empty #js[]
   Similar to componentDidMount/componentWillUnmount"
