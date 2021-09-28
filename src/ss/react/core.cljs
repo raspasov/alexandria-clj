@@ -49,6 +49,13 @@
   [x swap-x]))
 
 
+(defn use-atom
+ "Shared mutable state. Use with caution."
+ [*x]
+ (let [[*x _] (use-state *x)]
+  *x))
+
+
 (defn native-event
  "Extracts the nativeEvent from a React SyntheticEvent."
  [^js/Object synthetic-event]

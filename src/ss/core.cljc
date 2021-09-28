@@ -96,6 +96,16 @@
   (fn [idx x] (when (pred x) idx))
   coll))
 
+(defn ->subvec-idx
+ "Given a vector v and idx, ensure idx is save to use with subvec and won't throw an exception."
+ [v idx]
+ (cond
+  (neg? idx) 0
+  (< (count v) idx) (count v)
+  ;safe
+  :else
+  idx))
+
 
 (defn print-separator [msg]
  (let [filler-cnt      (- 78 (count msg))
