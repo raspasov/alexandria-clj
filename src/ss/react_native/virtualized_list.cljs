@@ -22,7 +22,7 @@
                                       [item-data idx]))
            :getItemCount          (fn [data] (count data))
            ;needs to return a key as string
-           :keyExtractor          (fn [[_ idx]] (str idx))
+           :keyExtractor          (fn [[item-data idx]] (str idx))
            :ref                   (state-fns/save-ref ref-key)
            :initialNumToRender    initialNumToRender
            :scrollEnabled         scrollEnabled
@@ -61,13 +61,15 @@
 
 (defn scroll-to-index
   "IMPORTANT :getItemLayout must specified for this to work"
-  [^js/ReactNative.VirtualizedList vl idx]
+ ([vl idx]
+  (scroll-to-index vl idx true))
+ ([^js vl idx animated?]
   (try
-    (.scrollToIndex vl (b/->js {:index idx :animated true}))
-    (catch js/Error e (do)))
+   (.scrollToIndex vl (b/->js {:index idx :animated animated?}))
+   (catch js/Error e (do)))
   (try
-    (.scrollToIndex (.. vl -_component) (b/->js {:index idx :animated true}))
-    (catch js/Error e (do))))
+   (.scrollToIndex (.. vl -_component) (b/->js {:index idx :animated true}))
+   (catch js/Error e (do)))))
 
 (defn scroll-to-offset
   ([^js/Object vl offset]

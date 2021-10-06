@@ -1,6 +1,7 @@
 (ns ss.react.state-fns
  (:require [ss.react.state :as state]
-           [taoensso.timbre :as timbre]))
+           [taoensso.timbre :as timbre]
+           [medley.core :as med]))
 
 (defn- ^PersistentVector build-vector
  "Builds a vector from either k or sequence of ks"
@@ -16,6 +17,10 @@
 
 (defn update-mutable! [k-or-ks f]
  (swap! state/*mutable-state #(update-in % (build-vector-mem k-or-ks) f)))
+
+
+(defn dissoc-mutable! [k-or-ks]
+ (swap! state/*mutable-state #(med/dissoc-in % (build-vector-mem k-or-ks))))
 
 
 (defn ^js/Object get-mutable [k-or-ks]
@@ -37,11 +42,26 @@
       (callback a-ref k))
      ret)))))
 
+(defn ^js/cljs.core.IFn save-ref-2
+ "Added ability to use ks"
+ [& ks]
+ (fn [a-ref]
+  (when a-ref
+   (let [ret (set-mutable! (apply vector :refs ks) a-ref)]
+    ret))))
+
 
 (defn ^js/Object ref [k]
  (if-let [a-ref (get-in @state/*mutable-state [:refs k])]
   a-ref
   (timbre/warn "No ref found for k" k)))
+
+(defn ^js/Object ref-2
+ "Added ability to use ks"
+ [& ks]
+ (if-let [a-ref (get-in @state/*mutable-state (apply vector :refs ks))]
+  a-ref
+  (timbre/warn "No ref found for ks" ks)))
 
 (defn ^js/Object ref-no-warn [k]
  (get-in @state/*mutable-state [:refs k]))
