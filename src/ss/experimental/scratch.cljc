@@ -39,3 +39,32 @@
    (map vector)
    v1 v2)))
 
+
+#_(defn
+   backwards
+   "doesn't do much"
+   [args]
+   (apply str
+    (vec (drop 1 (vec (reverse args))))))
+
+#_(defn -main-1
+   "I don't do a whole lot ... yet."
+   [& args]
+   (do
+    (println (backwards '(1 2 3 str)))))
+
+(defn
+ backwards
+ "doesn't do much"
+ [args]
+ (let [args         (reverse args)
+       f            (nth args 0)
+       numbers-data (drop 1 args)]
+  (apply f numbers-data)))
+
+(defn -main-2
+ "I don't do a whole lot ... yet."
+ [& args]
+ (println (backwards [1 2 3 str])))
+
+

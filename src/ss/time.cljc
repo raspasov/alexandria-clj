@@ -1,6 +1,6 @@
 (ns ss.time
   (:require [tick.timezone]
-            [tick.alpha.api :as t]))
+            [tick.core :as t]))
 
 
 (defn timestamp []
@@ -91,61 +91,10 @@
           (t/in (str tz)))))
 
 
-(defn day-of-week-xf [day-of-week]
-  (comp
-    (map (juxt t/day-of-week identity))
-    (filter #(= (t/day-of-week day-of-week) (first %)))
-    (take 1)))
 
 
-(defn prev-day-of-week
-  "Walks backward and finds the desired day-of-week (inclusive today)"
-  [day-of-week]
-  (let [today-midnight (today-at-midnight-in-tz)
-        tomorrow-midnight        (t/+ today-midnight (t/new-period 1 :days))
-        tomorrow-midnight-7-days (t/- tomorrow-midnight (t/new-period 7 :days))
-        [_ ret]
-        (first
-          (sequence
-            (comp
-              (day-of-week-xf day-of-week)
-              #_(map t/day-of-week))
-            (t/range
-              tomorrow-midnight-7-days
-              tomorrow-midnight
-              (t/new-period 1 :days))))]
-    ret))
 
 
-(defn next-day-of-week
-  "Walks forward and finds the desired day-of-week (exclusive today)"
-  [day-of-week]
-  (let [today-midnight           (today-at-midnight-in-tz)
-        tomorrow-midnight        (t/+ today-midnight (t/new-period 1 :days))
-        tomorrow-midnight+7-days (t/+ tomorrow-midnight (t/new-period 7 :days))
-        [_ ret] (first
-                  (sequence
-                    (day-of-week-xf day-of-week)
-                    (t/range
-                      (t/beginning tomorrow-midnight)
-                      (t/end tomorrow-midnight+7-days)
-                      (t/new-period 1 :days))))]
-    ret))
-
-
-(defn weekly-chart-timestamps [day-of-week-start]
-  (let [t1 (prev-day-of-week day-of-week-start)
-        t2 (t/>> t1 (t/+ (t/new-period 1 :weeks)
-                         (t/new-period 1 :days)))]
-    (partition
-      2 1
-      (sequence
-        (comp
-          (map (juxt (comp str t/day-of-week) identity)))
-        (t/range
-          t1
-          t2
-          (t/new-period 1 :days))))))
 
 
 (comment

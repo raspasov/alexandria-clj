@@ -3,9 +3,9 @@
 ; (:require
 ;  [cljs-bean.core :as b]
 ;  [clojure.core.async :as a]
-;  [react-native-health :as -health]
+;  [react-native-helth :as -health]
 ;  [taoensso.timbre :as timbre]
-;  [tick.alpha.api :as t]))
+;  [tick.core :as t]))
 ;
 ;
 ;(def ^js health -health)

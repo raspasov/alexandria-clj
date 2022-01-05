@@ -7,7 +7,7 @@
            com.cognitect/transit-clj  {:mvn/version "1.0.324"}
            cljs-bean/cljs-bean        {:mvn/version "1.6.0"}
            net.cgrand/xforms          {:mvn/version "0.19.2"}
-           tick/tick                  {:mvn/version "0.4.32"
+           tick/tick                  {:mvn/version "0.5.0-RC2" #_"0.4.32"
                                        :exclusions  [cljsjs/js-joda-locale-en-us
                                                      cljsjs/js-joda-timezone]}
            ;{:git/url "https://github.com/juxt/tick" :sha "2934116ed3098d9e56f17498753e74adb9ee0a4a"}

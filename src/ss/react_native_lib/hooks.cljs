@@ -6,3 +6,7 @@
 
 (defn ^js/Object useKeyboard []
  ((.-useKeyboard hooks)))
+
+
+(defn useDimensions []
+ ((.-useDimensions hooks)))

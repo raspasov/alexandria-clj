@@ -31,7 +31,7 @@
   rna
   (b/->js
    {:removeFromList {:useNativeDriver true
-                     :from            {:height (dm/<> 100)}
+                     :from            {:height (dm/<>2 100)}
                      :to              {:height 0} :duration 200}
     :bounceBounce   {0   {:scale 1}
                      0.3 {:scale 0.95}

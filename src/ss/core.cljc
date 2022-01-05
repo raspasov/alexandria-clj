@@ -97,7 +97,7 @@
   coll))
 
 (defn ->subvec-idx
- "Given a vector v and idx, ensure idx is save to use with subvec and won't throw an exception."
+ "Given a vector v and idx, ensure idx is safe to use with subvec and won't throw an exception."
  [v idx]
  (cond
   (neg? idx) 0

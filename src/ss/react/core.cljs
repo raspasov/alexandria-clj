@@ -3,7 +3,7 @@
   [cljs-bean.core :as b]
   [create-react-class]
   [react]
-  [ss.cljs.gg]                            ;DO NOT REMOVE
+  [ss.cljs.gg]                            ;DO NOT REMOVE, used by core.cljc for macros
   [ss.react.state-fns :as ss.stf]
   [taoensso.timbre :as timbre])
  (:require-macros [ss.react.core]))
@@ -21,7 +21,7 @@
 (def use-ref (.-useRef React))
 
 
-(defn current [^js/Object ref]
+(defn current [^js ref]
  (.-current ref))
 
 
@@ -29,7 +29,30 @@
 
 
 (def use-callback (.-useCallback React))
+;
+;// Hook
+;function usePrevious(value) {
+;                             // The ref object is a generic container whose current property is mutable ...
+;                             // ... and can hold any value, similar to an instance property on a class
+;                             const ref = useRef();
+;                             // Store current value in ref
+;                             useEffect(() => {
+;                                              ref.current = value;
+;                                              }, [value]); // Only re-run if value changes
+;                             // Return previous value (happens before update in useEffect above)
+;                             return ref.current;
+;                             }
 
+(defn use-previous [x]
+ (let [^js ref (use-ref)
+       _   (use-effect
+            (fn []
+             (set! (.-current ref) x)
+             (fn cleanup []))
+            ;only re-run if 'x' changes
+            #js[x])]
+  ;return the current 'x'
+  (.-current ref)))
 
 (defn use-effect-once
  "useEffect with empty #js[]

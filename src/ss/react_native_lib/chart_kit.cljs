@@ -1,7 +1,7 @@
 (ns ss.react-native-lib.chart-kit
   (:require [react-native-chart-kit :as -rnck]
             [ss.react.core :as rc]
-            [tick.alpha.api :as t]
+            [tick.core :as t]
             [ss.time :as ax|t]))
 
 

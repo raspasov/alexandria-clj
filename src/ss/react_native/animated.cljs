@@ -59,7 +59,7 @@
   ([^js/Object anim-value input-range output-range extrapolate]
    (ie anim-value input-range output-range extrapolate nil))
   ([^js/Object anim-value input-range output-range extrapolate default-value]
-   (if (instance? js/Object anim-value)
+   (if anim-value
      (.interpolate
        anim-value
        (b/->js {:inputRange input-range :outputRange output-range :extrapolate extrapolate}))

@@ -18,18 +18,6 @@
 (def ss-camera (partial rc/create-element-js SSCamera))
 
 
-(defn set-orientation [k]
- (comment
-  ;one of...
-  #{:portrait
-    :portrait-upside-down
-    :landscape-right
-    :landscape-left})
- (.setOrientation SSCameraManager (name k)))
-
-
-(defn set-orientation-transform [degrees]
- (.setOrientationTransform SSCameraManager degrees))
 
 (defn start-camera [front-or-back on-stop]
  (timbre/info "start-camera in native:::" front-or-back)
