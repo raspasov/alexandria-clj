@@ -34,7 +34,7 @@
 
 
 (defmacro defnrc
- "A simple macro which outputs a (defn ... ) like this:
+ "A macro which outputs a (defn ... ) like this:
 
  ;from
  (defnrc my-component [props]

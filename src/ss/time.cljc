@@ -8,8 +8,11 @@
      :clj  (System/currentTimeMillis)))
 
 
-(defn timestamp-tz []
- {:time/timestamp (timestamp) :time/tz (str (t/zone))})
+(defn timestamp-tz
+ ([]
+  (timestamp-tz (timestamp)))
+ ([ts]
+  {:time/timestamp ts :time/tz (str (t/zone))}))
 
 
 (defn inst->timestamp [inst]
