@@ -23,3 +23,9 @@
      :prompt #(print "repl-debug=> ")
      :read readr
      :eval (partial contextual-eval (local-context))))
+
+;Sample usage
+(comment
+  (defn div [n d]
+    (break)
+    (int (/ n d))))
